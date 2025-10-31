@@ -1,87 +1,169 @@
+/* -------- Base Styles -------- */
 body {
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f5f7fa;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 40px;
+  padding: 30px 10px;
+  margin: 0;
+  color: #333;
 }
 
 .container {
   background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 90%; 
-  max-width: 1200px;
+  padding: 25px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 1100px;
+  box-sizing: border-box;
 }
 
+/* -------- Headings -------- */
 h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: #0078d7;
+  font-weight: 600;
 }
 
-.card {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  border: 1px solid #ddd;
-  padding: 20px;
+/* -------- Inputs & Buttons -------- */
+input[type="file"],
+input[type="number"],
+input[type="text"],
+select {
+  font-size: 14px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 20px;
+  outline: none;
+  transition: border 0.2s ease;
+  box-sizing: border-box;
 }
 
-.field {
-  background: #fafafa;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  padding: 10px;
-  word-wrap: break-word;
-}
-
-.label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.nav, .search {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+input:focus,
+select:focus {
+  border-color: #0078d7;
 }
 
 button {
   background: #0078d7;
-  color: white;
+  color: #fff;
   border: none;
   padding: 8px 14px;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
   background: #005fa3;
 }
 
-.filter {
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* -------- Search & Filter Sections -------- */
+.search, .filter {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
+  justify-content: flex-start;
   margin-bottom: 15px;
 }
 
-.filter input, .filter select {
-  padding: 6px;
+.search input {
+  width: 140px;
+}
+
+.filter label {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* -------- Sheet Selector -------- */
+#sheetSelector {
+  display: block;
+  margin: 10px 0;
+  padding: 6px 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 5px;
+  background: #fafafa;
+}
+
+/* -------- Match Info -------- */
+#matchInfo {
+  margin: 10px 0 20px;
+  font-size: 14px;
+  color: #444;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+#matchInfo button {
+  background: #e0e0e0;
+  color: #333;
+  font-size: 13px;
+  padding: 4px 8px;
+  margin-left: 6px;
+}
+
+#matchInfo button:hover {
+  background: #ccc;
+}
+
+/* -------- Record Card -------- */
+.card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  background: #fafafa;
+  min-height: 120px;
+  position: relative;
+}
+
+/* -------- Field Blocks -------- */
+.field {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 10px 12px;
+  word-wrap: break-word;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.field-value {
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .expand-btn {
-  background-color: transparent;
+  background: transparent;
   border: none;
   color: #0078d7;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   margin-left: 5px;
   padding: 0;
@@ -92,6 +174,42 @@ button:hover {
   text-decoration: underline;
 }
 
+/* -------- No Record Message -------- */
+.no-record {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  background: #fdfdfd;
+  border: 1px dashed #bbb;
+  border-radius: 10px;
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  width: 100%;
+  height: 200px;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.04);
+}
+
+.no-record::before {
+  content: "📄";
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.75;
+}
+
+/* -------- Navigation Buttons -------- */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* -------- Footer -------- */
 .footer {
   margin-top: 40px;
   padding: 15px 20px;
@@ -99,15 +217,43 @@ button:hover {
   color: #333;
   border-top: 1px solid #ddd;
   text-align: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 0 0 10px 10px;
   font-size: 14px;
 }
 
 .footer-content strong {
   font-weight: 600;
+  color: #0078d7;
 }
 
 .footer-content span {
   font-style: italic;
   color: #555;
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 700px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .search, .filter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  select {
+    width: 100%;
+  }
 }

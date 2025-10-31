@@ -3,32 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <title>Excel Viewer</title>
+
+  <!-- Meta Tags for SEO + WhatsApp/Facebook/Twitter -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="Excel Record Viewer">
+  <meta name="description" content="A simple, secure, and elegant Excel Record Viewer created by Gulzar Hussain. Upload Excel files and browse records beautifully, one by one.">
+  <meta name="keywords" content="Excel Viewer, Spreadsheet Viewer, XLSX, CSV, XLS, File Viewer, Gulzar Hussain, UOL">
+  <meta name="author" content="Gulzar Hussain">
+
+  <!-- Open Graph (WhatsApp, Facebook) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Excel Record Viewer">
+  <meta property="og:description" content="Upload and browse Excel records in a clean, user-friendly viewer developed by Gulzar Hussain.">
+  <meta property="og:image" content="https://yourdomain.com/excel-viewer-thumbnail.png">
+  <meta property="og:url" content="https://yourdomain.com/">
+  <meta property="og:site_name" content="Excel Record Viewer">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Excel Record Viewer">
+  <meta name="twitter:description" content="Easily view and navigate Excel files — developed by Gulzar Hussain.">
+  <meta name="twitter:image" content="https://yourdomain.com/excel-viewer-thumbnail.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://yourdomain.com/favicon.png">
+
+  <!-- Styles & Library -->
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
+
 <body>
   <div class="container">
     <h2>Excel Record Viewer</h2>
 
     <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
+    <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
+      <label for="sheetSelector">Select sheet:</label>
+      <select id="sheetSelector"></select>
+    </div>
+
     <hr>
-    <div class="search" style="margin-bottom: 4px;">
-      <input type="number" id="searchIndex" placeholder="Go to row #">
-      <button id="goBtn">Go</button>
+
+    <div class="search">
+      <input type="number" id="searchIndex" placeholder="Go to row #" disabled>
+      <button id="goBtn" disabled>Go</button>
     </div>
 
     <div class="filter">
       <label for="filterColumn">Filter by:</label>
-      <select id="filterColumn"></select>
-      <input type="text" id="filterValue" placeholder="Enter value to search">
-      <button id="filterBtn">Search</button>
+      <select id="filterColumn" disabled></select>
+      <input type="text" id="filterValue" placeholder="Enter value to search" disabled>
+      <button id="filterBtn" disabled>Search</button>
     </div>
 
-    <div id="recordViewer" class="card"></div>
+    <div id="filterInfo" class="filter-info" style="display:none;"></div>
+
+    <!-- Centered No Record Message -->
+    <div id="recordViewer" class="card">
+      <div class="no-record">📄 No record loaded.</div>
+    </div>
 
     <div class="nav">
-      <button id="prevBtn">Previous</button>
-      <button id="nextBtn">Next</button>
+      <button id="prevBtn" disabled>Previous</button>
+      <button id="nextBtn" disabled>Next</button>
     </div>
 
     <footer class="footer">
