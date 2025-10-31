@@ -8,28 +8,34 @@
 </head>
 <body>
   <div class="container">
-    <h2>📂 Excel Record Viewer</h2>
+    <h2>Excel Record Viewer</h2>
 
     <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
     <hr>
-    <div class="search">
+    <div class="search" style="margin-bottom: 4px;">
       <input type="number" id="searchIndex" placeholder="Go to row #">
       <button id="goBtn">Go</button>
     </div>
 
     <div class="filter">
-        <label for="filterColumn">Filter by:</label>
-        <select id="filterColumn"></select>
-        <input type="text" id="filterValue" placeholder="Enter value to search">
-        <button id="filterBtn">Search</button>
+      <label for="filterColumn">Filter by:</label>
+      <select id="filterColumn"></select>
+      <input type="text" id="filterValue" placeholder="Enter value to search">
+      <button id="filterBtn">Search</button>
     </div>
+
     <div id="recordViewer" class="card"></div>
 
     <div class="nav">
-      <button id="prevBtn">⬅️ Previous</button>
-      <button id="nextBtn">Next ➡️</button>
+      <button id="prevBtn">Previous</button>
+      <button id="nextBtn">Next</button>
     </div>
 
+    <footer class="footer">
+      <div class="footer-content">
+        Developed by <strong>Gulzar Hussain</strong>, Sr. Tech Assistant, <span>UOL</span>
+      </div>
+    </footer>
   </div>
 
   <script src="script.js"></script>

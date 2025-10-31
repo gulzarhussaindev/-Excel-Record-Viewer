@@ -1,4 +1,4 @@
-let workbook, sheetData = [], headers = [], currentIndex = 0;
+let workbook, sheetData = [], headers = [], currentIndex = 0; 
 
 document.getElementById('fileInput').addEventListener('change', handleFile);
 document.getElementById('prevBtn').addEventListener('click', () => showRecord(currentIndex - 1));
@@ -38,13 +38,41 @@ function showRecord(index) {
   const record = sheetData[index];
   const viewer = document.getElementById('recordViewer');
   viewer.innerHTML = `
-    <div><b>Record ${index + 1}</b> of ${sheetData.length}</div><br>
-    ${headers.map((header, i) => `
-      <div class="field">
-        <span class="label">${header}:</span> ${record[i] ?? ""}
-      </div>
-    `).join("")}
+    <div><b>Record ${index + 1}</b> of ${sheetData.length}</div>
+    ${headers.map((header, i) => {
+      let value = (record[i] ?? "").toString();
+      const maxLength = 120;
+      const needsExpand = value.length > maxLength;
+      const shortValue = needsExpand ? value.slice(0, maxLength) + "..." : value;
+
+      return `
+        <div class="field">
+          <span class="label">${header}:</span>
+          <span class="field-value">${shortValue}</span>
+          ${needsExpand ? `<button class="expand-btn">Expand</button>` : ''}
+          <span class="full-text" style="display:none;">${value}</span>
+        </div>
+      `;
+    }).join('')}
   `;
+
+  // Add expand/collapse functionality
+  viewer.querySelectorAll('.expand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.parentElement;
+      const fullText = parent.querySelector('.full-text').innerText;
+      const fieldValue = parent.querySelector('.field-value');
+
+      if (btn.innerText === "Expand") {
+        fieldValue.innerText = fullText;
+        btn.innerText = "Collapse";
+      } else {
+        const shortValue = fullText.slice(0, 120) + "...";
+        fieldValue.innerText = shortValue;
+        btn.innerText = "Expand";
+      }
+    });
+  });
 }
 
 function goToRecord() {
