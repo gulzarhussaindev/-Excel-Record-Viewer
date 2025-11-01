@@ -235,6 +235,11 @@ button:active {
   cursor: not-allowed;
   box-shadow: none;
 }
+@media (max-width: 480px) {
+  #installBtn {
+    width: 116px !important;
+  }
+}
 
 /* -------- Navigation Buttons -------- */
 .nav {
@@ -303,4 +308,5 @@ button:active {
   select {
     width: 100%;
   }
+
 }
