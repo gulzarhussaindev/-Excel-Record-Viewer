@@ -235,9 +235,9 @@ button:active {
   cursor: not-allowed;
   box-shadow: none;
 }
-@media (max-width: 480px) {
+@media (max-width: 700px) {
   #installBtn {
-    width: 116px !important;
+    width: 94px !important;
   }
 }
 
@@ -310,3 +310,4 @@ button:active {
   }
 
 }
+
