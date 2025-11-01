@@ -1,3 +1,5 @@
+/* script.js — corrected & synced UI + immediate arrow-key navigation */
+
 let workbook, sheetData = [], headers = [], currentIndex = 0;
 let matches = [], matchIndex = 0;
 
@@ -18,8 +20,14 @@ sheetSelector.style.marginBottom = '10px';
 sheetSelector.style.display = 'none';
 container.insertBefore(sheetSelector, container.querySelector('hr'));
 
+// make body programmatically focusable so we can reliably focus it
+if (!document.body.hasAttribute('tabindex')) {
+  document.body.setAttribute('tabindex', '-1');
+}
+
 disableUI(true);
 
+// Event listeners
 fileInput.addEventListener('change', handleFile);
 prevBtn.addEventListener('click', () => showRecord(currentIndex - 1));
 nextBtn.addEventListener('click', () => showRecord(currentIndex + 1));
@@ -40,7 +48,7 @@ recordViewer.addEventListener('click', e => {
       fieldValue.textContent = fullText;
       e.target.textContent = 'Collapse';
     } else {
-      fieldValue.textContent = fullText.slice(0, 120) + '...';
+      fieldValue.textContent = fullText.slice(0, 60) + '...';
       e.target.textContent = 'Expand';
     }
   }
@@ -56,7 +64,7 @@ function handleFile(e) {
     workbook = XLSX.read(data, { type: 'array' });
 
     if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      recordViewer.textContent = "No sheets found in file.";
+      showEmptyMessage("No sheets found in file.");
       return;
     }
 
@@ -70,8 +78,16 @@ function handleFile(e) {
     });
 
     sheetSelector.style.display = workbook.SheetNames.length > 1 ? 'inline-block' : 'none';
+
+    // Load first sheet
     loadSheet(workbook.SheetNames[0]);
     disableUI(false);
+
+    // ensure body is focused so keyboard navigation works immediately
+    try { document.body.focus(); } catch (err) { /* ignore */ }
+
+    // final UI sync
+    syncUI();
   };
   reader.readAsArrayBuffer(file);
 }
@@ -79,23 +95,29 @@ function handleFile(e) {
 function loadSheet(name) {
   const sheet = workbook.Sheets[name];
   const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-  if (json.length === 0) {
+
+  if (!Array.isArray(json) || json.length === 0 || (Array.isArray(json[0]) && json[0].length === 0)) {
     headers = [];
     sheetData = [];
-    recordViewer.textContent = "No records found in this sheet.";
+    showEmptyMessage("No records found in this sheet.");
     disableUI(true);
+    syncUI();
     return;
   }
 
-  headers = json[0];
-  sheetData = json.slice(1);
+  headers = json[0].map(h => h == null ? '' : String(h));
+  sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
   currentIndex = 0;
   matches = [];
   matchIndex = 0;
 
   populateFilterDropdown();
   showRecord(currentIndex);
-  updateMatchInfo();
+
+  // ensure body is focused so arrow keys work immediately
+  try { document.body.focus(); } catch (err) { /* ignore */ }
+
+  syncUI();
 }
 
 function populateFilterDropdown() {
@@ -103,46 +125,57 @@ function populateFilterDropdown() {
   headers.forEach((h, i) => {
     const opt = document.createElement('option');
     opt.value = i;
-    opt.textContent = h;
+    opt.textContent = h || `Column ${i + 1}`;
     filterColumnSelect.appendChild(opt);
   });
 }
 
 function showRecord(index) {
-  if (sheetData.length === 0) {
-    recordViewer.textContent = "0 records.";
+  // clamp index
+  if (!sheetData || sheetData.length === 0) {
+    showEmptyMessage("No records.");
     return;
   }
-  if (index < 0 || index >= sheetData.length) return;
+  if (index < 0) index = 0;
+  if (index >= sheetData.length) index = sheetData.length - 1;
 
   currentIndex = index;
-  const record = sheetData[index];
+  const record = sheetData[currentIndex];
 
+  // render record safely using DOM methods
   recordViewer.innerHTML = '';
+  recordViewer.classList.remove('empty-message');
+
   const headerDiv = document.createElement('div');
-  headerDiv.innerHTML = `<b>Record ${index + 1}</b> of ${sheetData.length}`;
+  headerDiv.textContent = `Record ${currentIndex + 1} of ${sheetData.length}`;
+  headerDiv.style.gridColumn = '1 / -1';
+  headerDiv.style.marginBottom = '6px';
+  headerDiv.style.fontWeight = '600';
   recordViewer.appendChild(headerDiv);
 
   headers.forEach((header, i) => {
-    const value = (record[i] ?? "").toString();
+    const value = record[i] != null ? String(record[i]) : '';
     const fieldDiv = document.createElement('div');
     fieldDiv.className = 'field';
 
     const labelSpan = document.createElement('span');
     labelSpan.className = 'label';
-    labelSpan.textContent = `${header}:`;
+    labelSpan.textContent = header + ':';
 
     const fieldValue = document.createElement('span');
     fieldValue.className = 'field-value';
+
     const fullTextSpan = document.createElement('span');
     fullTextSpan.className = 'full-text';
     fullTextSpan.style.display = 'none';
     fullTextSpan.textContent = value;
 
-    if (value.length > 120) {
-      fieldValue.textContent = value.slice(0, 120) + '...';
+    const maxLength = 60;
+    if (value.length > maxLength) {
+      fieldValue.textContent = value.slice(0, maxLength) + '...';
       const expandBtn = document.createElement('button');
       expandBtn.className = 'expand-btn';
+      expandBtn.type = 'button';
       expandBtn.textContent = 'Expand';
       fieldDiv.append(labelSpan, fieldValue, expandBtn, fullTextSpan);
     } else {
@@ -153,11 +186,14 @@ function showRecord(index) {
     recordViewer.appendChild(fieldDiv);
   });
 
+  // update UI
   updateNavButtons();
   updateMatchInfo();
+  syncUI();
 }
 
 function updateNavButtons() {
+  // If a filter is active we may want different behavior, but keep basic logic for raw prev/next
   prevBtn.disabled = (currentIndex <= 0);
   nextBtn.disabled = (currentIndex >= sheetData.length - 1);
 }
@@ -176,12 +212,20 @@ function goToRecord() {
   const i = parseInt(searchIndexInput.value, 10);
   if (!isNaN(i) && i > 0 && i <= sheetData.length) {
     showRecord(i - 1);
+  } else {
+    alert("Invalid row number.");
   }
 }
 
 function filterRecords() {
+  if (!sheetData || sheetData.length === 0) {
+    alert("No data loaded.");
+    return;
+  }
+
   const colIndex = parseInt(filterColumnSelect.value, 10);
-  const searchValue = filterValueInput.value.trim().toLowerCase().replace(/\s+/g, ' ');
+  const raw = String(filterValueInput.value || '');
+  const searchValue = raw.trim().toLowerCase().replace(/\s+/g, ' ');
   if (!searchValue) {
     alert("Please enter a value to search.");
     return;
@@ -189,8 +233,8 @@ function filterRecords() {
 
   matches = [];
   sheetData.forEach((row, idx) => {
-    const cellValue = (row[colIndex] ?? "").toString().toLowerCase().replace(/\s+/g, ' ');
-    if (cellValue.includes(searchValue)) matches.push(idx);
+    const cell = (row[colIndex] ?? '').toString().toLowerCase().replace(/\s+/g, ' ');
+    if (cell.includes(searchValue)) matches.push(idx);
   });
 
   if (matches.length === 0) {
@@ -201,6 +245,7 @@ function filterRecords() {
   matchIndex = 0;
   showRecord(matches[matchIndex]);
   updateMatchInfo(true);
+  syncUI();
 }
 
 function updateMatchInfo(showClear = false) {
@@ -213,32 +258,123 @@ function updateMatchInfo(showClear = false) {
   }
 
   if (matches.length > 0) {
-    infoDiv.innerHTML = `
-      Found ${matches.length} match(es).
-      Showing ${matchIndex + 1} of ${matches.length} (Row ${matches[matchIndex] + 1})
-      ${showClear ? '<button id="prevMatchBtn">Prev Match</button> <button id="nextMatchBtn">Next Match</button> <button id="clearFilterBtn">Clear Filter</button>' : ''}
-    `;
+    // build text safely with DOM
+    infoDiv.innerHTML = ''; // clear
+    const text = document.createElement('span');
+    text.textContent = `Found ${matches.length} match(es). Showing ${matchIndex + 1} of ${matches.length} (Row ${matches[matchIndex] + 1})`;
+    infoDiv.appendChild(text);
 
     if (showClear) {
-      document.getElementById('prevMatchBtn').onclick = () => {
+      const prevMatchBtn = document.createElement('button');
+      prevMatchBtn.id = 'prevMatchBtn';
+      prevMatchBtn.type = 'button';
+      prevMatchBtn.textContent = 'Prev Match';
+      prevMatchBtn.style.marginLeft = '10px';
+      prevMatchBtn.addEventListener('click', () => {
         if (matchIndex > 0) matchIndex--;
         showRecord(matches[matchIndex]);
         updateMatchInfo(true);
-      };
-      document.getElementById('nextMatchBtn').onclick = () => {
+      });
+
+      const nextMatchBtn = document.createElement('button');
+      nextMatchBtn.id = 'nextMatchBtn';
+      nextMatchBtn.type = 'button';
+      nextMatchBtn.textContent = 'Next Match';
+      nextMatchBtn.style.marginLeft = '8px';
+      nextMatchBtn.addEventListener('click', () => {
         if (matchIndex < matches.length - 1) matchIndex++;
         showRecord(matches[matchIndex]);
         updateMatchInfo(true);
-      };
-      document.getElementById('clearFilterBtn').onclick = () => {
+      });
+
+      const clearBtn = document.createElement('button');
+      clearBtn.id = 'clearFilterBtn';
+      clearBtn.type = 'button';
+      clearBtn.textContent = 'Clear Filter';
+      clearBtn.style.marginLeft = '8px';
+      clearBtn.addEventListener('click', () => {
         matches = [];
         matchIndex = 0;
         filterValueInput.value = '';
         showRecord(currentIndex);
         updateMatchInfo();
-      };
+        syncUI();
+      });
+
+      infoDiv.appendChild(prevMatchBtn);
+      infoDiv.appendChild(nextMatchBtn);
+      infoDiv.appendChild(clearBtn);
     }
   } else {
     infoDiv.textContent = '';
   }
 }
+
+function showEmptyMessage(msg) {
+  recordViewer.className = 'card';
+  recordViewer.innerHTML = '';
+  const box = document.createElement('div');
+  box.className = 'no-record';
+  box.textContent = msg;
+  recordViewer.appendChild(box);
+}
+
+/* syncUI: central function to ensure nav buttons, filter UI, and focus are consistent */
+function syncUI() {
+  // update nav buttons considering active filter matches
+  if (matches && matches.length > 0) {
+    prevBtn.disabled = (matchIndex <= 0);
+    nextBtn.disabled = (matchIndex >= matches.length - 1);
+  } else {
+    prevBtn.disabled = (currentIndex <= 0);
+    nextBtn.disabled = (currentIndex >= sheetData.length - 1);
+  }
+
+  // ensure controls enabled when data present
+  const hasData = (sheetData && sheetData.length > 0);
+  goBtn.disabled = !hasData;
+  filterBtn.disabled = !hasData;
+  searchIndexInput.disabled = !hasData;
+  filterColumnSelect.disabled = !hasData;
+  filterValueInput.disabled = !hasData;
+
+  // make sure arrow keys will work: focus the body (body is set tabindex="-1" above)
+  try { document.body.focus(); } catch (err) { /* ignore */ }
+}
+
+// ✅ Keyboard navigation: works immediately after file/sheet load
+document.addEventListener('keydown', (event) => {
+  // don't interfere when user types in inputs or textareas or selects
+  const tag = event.target && event.target.tagName && event.target.tagName.toUpperCase();
+  if (!sheetData || sheetData.length === 0) return;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || event.ctrlKey || event.metaKey) return;
+
+  if (event.key === 'ArrowRight') {
+    event.preventDefault();
+    // if filter active, navigate matches
+    if (matches && matches.length > 0) {
+      if (matchIndex < matches.length - 1) {
+        matchIndex++;
+        showRecord(matches[matchIndex]);
+        updateMatchInfo(true);
+      }
+    } else {
+      if (currentIndex < sheetData.length - 1) {
+        showRecord(currentIndex + 1);
+      }
+    }
+  } else if (event.key === 'ArrowLeft') {
+    event.preventDefault();
+    if (matches && matches.length > 0) {
+      if (matchIndex > 0) {
+        matchIndex--;
+        showRecord(matches[matchIndex]);
+        updateMatchInfo(true);
+      }
+    } else {
+      if (currentIndex > 0) {
+        showRecord(currentIndex - 1);
+      }
+    }
+  }
+});
