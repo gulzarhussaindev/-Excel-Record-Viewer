@@ -200,6 +200,41 @@ button:active {
   margin-bottom: 12px;
   opacity: 0.75;
 }
+/* ========== Header Layout ========== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* ========== Install Button (Top Right) ========== */
+.install-top-btn {
+  background: #f0f6ff;
+  color: #0078d7;
+  border: 1px solid #0078d7;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 120, 215, 0.15);
+}
+
+.install-top-btn:hover {
+  background: #0078d7;
+  color: white;
+  box-shadow: 0 3px 8px rgba(0, 120, 215, 0.25);
+}
+
+.install-top-btn:disabled {
+  background: #e0e0e0;
+  color: #666;
+  border-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
 /* -------- Navigation Buttons -------- */
 .nav {
@@ -230,6 +265,18 @@ button:active {
   font-style: italic;
   color: #555;
 }
+
+.footer-link {
+  color: #0078d7;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+}
+
+.footer-link:hover {
+  color: #005fa3;
+  text-decoration: underline;
+}
+
 
 /* -------- Responsive -------- */
 @media (max-width: 700px) {

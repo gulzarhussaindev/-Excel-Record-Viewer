@@ -30,12 +30,19 @@
 
   <!-- Styles & Library -->
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
+
 <body>
   <div class="container">
-    <h2>Excel Record Viewer</h2>
+    <div class="header">
+      <h2>Excel Record Viewer</h2>
+      <button id="installBtn" class="install-top-btn" style="display:none;">
+        📲 Install App
+      </button>
+    </div>
 
     <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
     <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
@@ -71,11 +78,39 @@
 
     <footer class="footer">
       <div class="footer-content">
-        Developed by <strong>Gulzar Hussain</strong>, Sr. Tech Assistant, <span>UOL</span>
+        Developed by 
+        <strong>
+          <a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">
+            Gulzar Hussain
+          </a>
+        </strong>, 
+        Sr. Tech Assistant, <span>UOL</span>
       </div>
     </footer>
   </div>
+  <script>
+    // Handle install prompt
+    let deferredPrompt;
+    const installBtn = document.getElementById("installBtn");
 
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-block";
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === "accepted") {
+          console.log("App installed");
+        }
+        installBtn.style.display = "none";
+        deferredPrompt = null;
+      }
+    });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
