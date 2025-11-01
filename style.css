@@ -237,7 +237,7 @@ button:active {
 }
 @media (max-width: 700px) {
   #installBtn {
-    width: 94px !important;
+    width: 117px !important;
   }
 }
 
@@ -310,4 +310,5 @@ button:active {
   }
 
 }
+
 
