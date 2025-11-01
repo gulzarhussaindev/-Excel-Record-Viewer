@@ -14,11 +14,13 @@ body {
   background: #fff;
   padding: 25px 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  width: 100%;
-  max-width: 1615px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 90%;
+  max-width: 1500px;
+  margin: 20px auto;  /* centers and gives top/bottom spacing */
   box-sizing: border-box;
 }
+
 
 /* -------- Headings -------- */
 h2 {
