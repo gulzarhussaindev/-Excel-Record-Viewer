@@ -15,6 +15,18 @@ const filterValueInput = document.getElementById('filterValue');
 const recordViewer = document.getElementById('recordViewer');
 const container = document.querySelector('.container');
 
+
+let visibleHeaders = JSON.parse(localStorage.getItem("visibleHeaders")) || [];
+
+// Modal elements
+const selectFieldsBtn = document.getElementById("selectFieldsBtn");
+const headerModal = document.getElementById("headerModal");
+const headerOptions = document.getElementById("headerOptions");
+const selectAllBtn = document.getElementById("selectAllBtn");
+const unselectAllBtn = document.getElementById("unselectAllBtn");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
+
 sheetSelector.id = 'sheetSelector';
 sheetSelector.style.marginBottom = '10px';
 sheetSelector.style.display = 'none';
@@ -106,6 +118,10 @@ function loadSheet(name) {
   }
 
   headers = json[0].map(h => h == null ? '' : String(h));
+
+  if (!visibleHeaders.length) visibleHeaders = [...headers];
+renderHeaderOptions();
+
   sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
   currentIndex = 0;
   matches = [];
@@ -123,10 +139,16 @@ function loadSheet(name) {
 function populateFilterDropdown() {
   filterColumnSelect.innerHTML = '';
   headers.forEach((h, i) => {
+
+    
+    // your existing code for displaying field
+ 
+
     const opt = document.createElement('option');
     opt.value = i;
     opt.textContent = h || `Column ${i + 1}`;
     filterColumnSelect.appendChild(opt);
+
   });
 }
 
@@ -154,36 +176,39 @@ function showRecord(index) {
   recordViewer.appendChild(headerDiv);
 
   headers.forEach((header, i) => {
-    const value = record[i] != null ? String(record[i]) : '';
-    const fieldDiv = document.createElement('div');
-    fieldDiv.className = 'field';
+    if (visibleHeaders.includes(header)) {
+          
+      const value = record[i] != null ? String(record[i]) : '';
+      const fieldDiv = document.createElement('div');
+      fieldDiv.className = 'field';
 
-    const labelSpan = document.createElement('span');
-    labelSpan.className = 'label';
-    labelSpan.textContent = header + ':';
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'label';
+      labelSpan.textContent = header + ':';
 
-    const fieldValue = document.createElement('span');
-    fieldValue.className = 'field-value';
+      const fieldValue = document.createElement('span');
+      fieldValue.className = 'field-value';
 
-    const fullTextSpan = document.createElement('span');
-    fullTextSpan.className = 'full-text';
-    fullTextSpan.style.display = 'none';
-    fullTextSpan.textContent = value;
+      const fullTextSpan = document.createElement('span');
+      fullTextSpan.className = 'full-text';
+      fullTextSpan.style.display = 'none';
+      fullTextSpan.textContent = value;
 
-    const maxLength = 60;
-    if (value.length > maxLength) {
-      fieldValue.textContent = value.slice(0, maxLength) + '...';
-      const expandBtn = document.createElement('button');
-      expandBtn.className = 'expand-btn';
-      expandBtn.type = 'button';
-      expandBtn.textContent = 'Expand';
-      fieldDiv.append(labelSpan, fieldValue, expandBtn, fullTextSpan);
-    } else {
-      fieldValue.textContent = value;
-      fieldDiv.append(labelSpan, fieldValue);
+      const maxLength = 60;
+      if (value.length > maxLength) {
+        fieldValue.textContent = value.slice(0, maxLength) + '...';
+        const expandBtn = document.createElement('button');
+        expandBtn.className = 'expand-btn';
+        expandBtn.type = 'button';
+        expandBtn.textContent = 'Expand';
+        fieldDiv.append(labelSpan, fieldValue, expandBtn, fullTextSpan);
+      } else {
+        fieldValue.textContent = value;
+        fieldDiv.append(labelSpan, fieldValue);
+      }
+
+      recordViewer.appendChild(fieldDiv);
     }
-
-    recordViewer.appendChild(fieldDiv);
   });
 
   // update UI
@@ -377,4 +402,108 @@ document.addEventListener('keydown', (event) => {
       }
     }
   }
+});
+
+function renderHeaderOptions() {
+  headerOptions.innerHTML = "";
+  headers.forEach((header) => {
+    const div = document.createElement("div");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = header;
+    checkbox.checked = visibleHeaders.includes(header);
+    checkbox.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        if (!visibleHeaders.includes(header)) visibleHeaders.push(header);
+      } else {
+        visibleHeaders = visibleHeaders.filter((h) => h !== header);
+      }
+      saveHeaderPrefs();
+      showRecord(currentIndex); // refresh
+    });
+    const label = document.createElement("label");
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(header));
+    div.appendChild(label);
+    headerOptions.appendChild(div);
+  });
+}
+
+// Listen for any change in header checkboxes
+// headerOptions.addEventListener('change', () => {
+//   // Get all checked headers
+//   const checkedHeaders = Array.from(document.querySelectorAll('#headerOptions input[type="checkbox"]:checked'))
+//     .map(cb => cb.value);
+
+//   // Save selection in localStorage so it persists
+//   localStorage.setItem('selectedHeaders', JSON.stringify(checkedHeaders));
+
+//   // ✅ Immediately refresh the current record view
+//   showRecord(currentIndex);
+// });
+
+
+// headerOptions.addEventListener("change", () => {
+//   updateSelectedHeaders();
+// });
+
+// // Handle "Select All" button
+// document.getElementById("selectAllBtn").addEventListener("click", () => {
+//   const checkboxes = headerOptions.querySelectorAll('input[type="checkbox"]');
+//   checkboxes.forEach(cb => cb.checked = true);
+
+//   localStorage.setItem('selectedHeaders', JSON.stringify(checkedHeaders));
+//   debugger
+//   showRecord(currentIndex);
+//   // updateSelectedHeaders();
+// });
+
+// // Handle "Unselect All" button
+// document.getElementById("unselectAllBtn").addEventListener("click", () => {
+//   const checkboxes = headerOptions.querySelectorAll('input[type="checkbox"]');
+//   checkboxes.forEach(cb => cb.checked = false);
+//   updateSelectedHeaders();
+// });
+
+// // Helper to save and refresh record view
+// function updateSelectedHeaders() {
+//   const checkedHeaders = Array.from(
+//     headerOptions.querySelectorAll('input[type="checkbox"]:checked')
+//   ).map(cb => cb.value);
+
+//   localStorage.setItem("selectedHeaders", JSON.stringify(checkedHeaders));
+
+//   // ✅ Immediately refresh displayed record
+//   showRecord(currentIndex);
+// }
+
+
+function saveHeaderPrefs() {
+  localStorage.setItem("visibleHeaders", JSON.stringify(visibleHeaders));
+}
+
+selectFieldsBtn.addEventListener("click", () => {
+  headerModal.style.display = "flex";
+});
+
+closeModalBtn.addEventListener("click", () => {
+  headerModal.style.display = "none";
+});
+
+window.onclick = (e) => {
+  if (e.target === headerModal) headerModal.style.display = "none";
+};
+
+selectAllBtn.addEventListener("click", () => {
+  visibleHeaders = [...headers];
+  saveHeaderPrefs();
+  renderHeaderOptions();
+  showRecord(currentIndex);
+});
+
+unselectAllBtn.addEventListener("click", () => {
+  visibleHeaders = [];
+  saveHeaderPrefs();
+  renderHeaderOptions();
+  showRecord(currentIndex);
 });

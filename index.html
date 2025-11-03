@@ -51,6 +51,21 @@
       <button id="installBtn" class="install-top-btn" style="display:none;">
         📲 Install App
       </button>
+
+      
+
+      <!-- Modal (place at bottom before script tags) -->
+      <div id="headerModal" class="modal">
+        <div class="modal-content">
+          <h3>Select Fields to Display</h3>
+          <div class="modal-actions">
+            <button id="selectAllBtn">Select All</button>
+            <button id="unselectAllBtn">Unselect All</button>
+            <button id="closeModalBtn">Close</button>
+          </div>
+          <div id="headerOptions"></div>
+        </div>
+      </div>
     </div>
 
     <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
@@ -58,7 +73,7 @@
       <label for="sheetSelector">Select sheet:</label>
       <select id="sheetSelector"></select>
     </div>
-
+<button id="selectFieldsBtn" class="install-top-btn">Select Fields</button>
     <hr>
 
     <div class="search">
@@ -124,4 +139,3 @@
 </body>
 
 </html>
-
