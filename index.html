@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Excel Viewer</title>
-
+  <title>Excel Record Viewer | Free Online XLSX & CSV File Viewer</title>
   <!-- Meta Tags for SEO + WhatsApp/Facebook/Twitter -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="title" content="Excel Record Viewer">
-  <meta name="description" content="A simple, secure, and elegant Excel Record Viewer created by Gulzar Hussain. Upload Excel files and browse records beautifully, one by one.">
+  <meta name="description" content="View Excel, XLSX, XLS, and CSV files instantly in your browser. Excel Record Viewer is a free, fast, and secure online spreadsheet viewer built by Gulzar Hussain.">
   <meta name="keywords" content="Excel Viewer, Spreadsheet Viewer, XLSX, CSV, XLS, File Viewer, Gulzar Hussain, UOL">
   <meta name="author" content="Gulzar Hussain">
 
@@ -24,6 +23,8 @@
   <meta name="twitter:title" content="Excel Record Viewer">
   <meta name="twitter:description" content="Easily view and navigate Excel files — developed by Gulzar Hussain.">
   <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-192.png">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="https://apps.uol.ac.in/assets/icons/icon-192.png">
@@ -31,6 +32,7 @@
   <!-- Styles & Library -->
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
+  <link rel="canonical" href="https://apps.uol.ac.in/">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
@@ -40,13 +42,39 @@
     gtag('js', new Date());
     gtag('config', 'G-SHDN3XWHYZ');
   </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Excel Record Viewer",
+      "description": "A simple, secure, and elegant Excel Record Viewer created by Gulzar Hussain. Upload Excel files and browse records beautifully, one by one.",
+      "operatingSystem": "Web",
+      "applicationCategory": "UtilityApplication",
+      "url": "https://apps.uol.ac.in",
+      "author": {
+        "@type": "Person",
+        "name": "Gulzar Hussain",
+        "email": "mailto:gulzarhussain@uol.ac.in"
+      },
+      "image": "https://apps.uol.ac.in/assets/icons/icon-192.png",
+      "screenshot": "https://apps.uol.ac.in/assets/icons/icon-512.png",
+      "license": "https://opensource.org/licenses/MIT",
+      "featureList": [
+        "Upload and view Excel, XLSX, XLS, or CSV files",
+        "Navigate records one by one or in table view",
+        "Filter, search, and export visible data",
+        "Installable as a PWA for offline use"
+      ],
+      "keywords": "Excel viewer, spreadsheet viewer, XLSX, CSV, XLS, online Excel tool, data viewer, Gulzar Hussain"
+    }
+  </script>
 </head>
 
 
 <body>
   <div class="container">
     <div class="header">
-      <h2>Excel Record Viewer</h2>
+      <h1 style="margin-top: 0px;">Excel Record Viewer</h1>
 
 
       <!-- Modal (place at bottom before script tags) -->
