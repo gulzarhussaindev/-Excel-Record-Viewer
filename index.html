@@ -48,14 +48,6 @@
     <div class="header">
       <h2>Excel Record Viewer</h2>
 
-      <div class="header-actions">
-        <button id="selectFieldsBtn" class="install-top-btn" title="Select fields to show">Fields</button>
-        <button id="toggleTableBtn" class="install-top-btn" title="Switch to table view" style="display:none;">Show Table</button>
-        <button id="exportBtn" class="install-top-btn" title="Export visible data" style="display:none;">Export ▼</button>
-        <button id="installBtn" class="install-top-btn" style="display:none;">
-          📲 Install App
-        </button>
-      </div>
 
       <!-- Modal (place at bottom before script tags) -->
       <div id="headerModal" class="modal" aria-hidden="true">
@@ -70,6 +62,15 @@
         </div>
       </div>
     </div>
+      <div class="header-actions">
+        <button id="selectFieldsBtn" class="install-top-btn" title="Select fields to show">Fields</button>
+        <button id="toggleTableBtn" class="install-top-btn" title="Switch to table view" style="display:none;">Show Table</button>
+        <button id="exportBtn" class="install-top-btn" title="Export visible data" style="display:none;">Export ▼</button>
+        <button id="installBtn" class="install-top-btn" style="display:none;">
+          📲 Install App
+        </button>
+      </div>
+
 
     <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
     <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">

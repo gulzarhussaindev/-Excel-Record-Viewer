@@ -23,25 +23,25 @@ body {
 }
 
 /* -------- Headings -------- */
-h2 {
+
+.header {
+  text-align: center; /* centers the app name */
+  margin-bottom: 10px;
+}
+
+.header h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* small gap before buttons line */
   color: #0078d7;
   font-weight: 600;
   font-size: 1.5rem;
 }
 
-/* header actions */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
 .header-actions {
   display: flex;
+  justify-content: flex-end; /* align buttons to the left */
   gap: 8px;
-  align-items: center;
+  margin-bottom: 15px;
 }
 
 /* -------- Inputs & Buttons -------- */
@@ -252,6 +252,19 @@ button:active {
   border-radius: 0 0 10px 10px;
   font-size: 0.9rem;
 }
+
+.footer-link {
+  color: #0078d7;
+  text-decoration: none;
+  font-weight: 600;
+}
+.footer-link:hover {
+  color: #444;
+  text-decoration: underline;
+  text-decoration-color: #bbb;
+}
+
+
 
 /* header selection modal */
 .modal {
