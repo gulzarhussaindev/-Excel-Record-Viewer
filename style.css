@@ -1,6 +1,7 @@
 /* -------- Base Styles -------- */
 html {
-  font-size: 15px; /* slightly smaller base font for balance */
+  font-size: 15px;
+  /* slightly smaller base font for balance */
 }
 
 body {
@@ -20,7 +21,8 @@ body {
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
   width: 95%;
-  max-width: 1200px; /* reduced from 1500px for better scale */
+  max-width: 1200px;
+  /* reduced from 1500px for better scale */
   margin: 30px auto;
   box-sizing: border-box;
 }
@@ -78,7 +80,8 @@ button:active {
 }
 
 /* -------- Search & Filter Sections -------- */
-.search, .filter {
+.search,
+.filter {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -132,7 +135,8 @@ button:active {
 .card {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px 18px; /* slightly reduced spacing */
+  gap: 14px 18px;
+  /* slightly reduced spacing */
   border: 1px solid #ddd;
   padding: 16px;
   border-radius: 8px;
@@ -299,7 +303,8 @@ button:active {
     padding: 14px;
   }
 
-  .search, .filter {
+  .search,
+  .filter {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -322,14 +327,15 @@ button:active {
 
 /* ====== Header Selection Modal ====== */
 .modal {
-  display: none; /* Hidden by default */
+  display: none;
+  /* Hidden by default */
   position: fixed;
   z-index: 2000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.35);
+  background-color: rgba(0, 0, 0, 0.35);
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(2px);
@@ -338,7 +344,7 @@ button:active {
 .modal-content {
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 420px;
   padding: 20px 24px;
@@ -397,6 +403,13 @@ button:active {
 
 /* Smooth modal animation */
 @keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

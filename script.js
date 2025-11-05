@@ -1,7 +1,10 @@
 /* script.js — corrected & synced UI + immediate arrow-key navigation */
 
-let workbook, sheetData = [], headers = [], currentIndex = 0;
-let matches = [], matchIndex = 0;
+let workbook, sheetData = [],
+  headers = [],
+  currentIndex = 0;
+let matches = [],
+  matchIndex = 0;
 
 const fileInput = document.getElementById('fileInput');
 const sheetSelector = document.createElement('select');
@@ -47,8 +50,12 @@ goBtn.addEventListener('click', goToRecord);
 filterBtn.addEventListener('click', filterRecords);
 sheetSelector.addEventListener('change', () => loadSheet(sheetSelector.value));
 
-searchIndexInput.addEventListener('keydown', e => { if (e.key === 'Enter') goToRecord(); });
-filterValueInput.addEventListener('keydown', e => { if (e.key === 'Enter') filterRecords(); });
+searchIndexInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') goToRecord();
+});
+filterValueInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') filterRecords();
+});
 
 recordViewer.addEventListener('click', e => {
   if (e.target.classList.contains('expand-btn')) {
@@ -73,7 +80,9 @@ function handleFile(e) {
   const reader = new FileReader();
   reader.onload = (event) => {
     const data = new Uint8Array(event.target.result);
-    workbook = XLSX.read(data, { type: 'array' });
+    workbook = XLSX.read(data, {
+      type: 'array'
+    });
 
     if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
       showEmptyMessage("No sheets found in file.");
@@ -96,7 +105,10 @@ function handleFile(e) {
     disableUI(false);
 
     // ensure body is focused so keyboard navigation works immediately
-    try { document.body.focus(); } catch (err) { /* ignore */ }
+    try {
+      document.body.focus();
+    } catch (err) {
+      /* ignore */ }
 
     // final UI sync
     syncUI();
@@ -106,7 +118,9 @@ function handleFile(e) {
 
 function loadSheet(name) {
   const sheet = workbook.Sheets[name];
-  const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+  const json = XLSX.utils.sheet_to_json(sheet, {
+    header: 1
+  });
 
   if (!Array.isArray(json) || json.length === 0 || (Array.isArray(json[0]) && json[0].length === 0)) {
     headers = [];
@@ -120,7 +134,7 @@ function loadSheet(name) {
   headers = json[0].map(h => h == null ? '' : String(h));
 
   if (!visibleHeaders.length) visibleHeaders = [...headers];
-renderHeaderOptions();
+  renderHeaderOptions();
 
   sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
   currentIndex = 0;
@@ -131,7 +145,10 @@ renderHeaderOptions();
   showRecord(currentIndex);
 
   // ensure body is focused so arrow keys work immediately
-  try { document.body.focus(); } catch (err) { /* ignore */ }
+  try {
+    document.body.focus();
+  } catch (err) {
+    /* ignore */ }
 
   syncUI();
 }
@@ -140,9 +157,9 @@ function populateFilterDropdown() {
   filterColumnSelect.innerHTML = '';
   headers.forEach((h, i) => {
 
-    
+
     // your existing code for displaying field
- 
+
 
     const opt = document.createElement('option');
     opt.value = i;
@@ -177,7 +194,7 @@ function showRecord(index) {
 
   headers.forEach((header, i) => {
     if (visibleHeaders.includes(header)) {
-          
+
       const value = record[i] != null ? String(record[i]) : '';
       const fieldDiv = document.createElement('div');
       fieldDiv.className = 'field';
@@ -364,7 +381,10 @@ function syncUI() {
   filterValueInput.disabled = !hasData;
 
   // make sure arrow keys will work: focus the body (body is set tabindex="-1" above)
-  try { document.body.focus(); } catch (err) { /* ignore */ }
+  try {
+    document.body.focus();
+  } catch (err) {
+    /* ignore */ }
 }
 
 // ✅ Keyboard navigation: works immediately after file/sheet load
