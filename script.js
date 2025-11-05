@@ -152,13 +152,50 @@ function handleFile(e){
 
 function loadSheet(name){
   const sheet = workbook.Sheets[name];
-  const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+  const json = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, cellDates: true, dateNF: "dd-mm-yyyy" });
+  
   if (!Array.isArray(json) || json.length === 0 || (Array.isArray(json[0]) && json[0].length === 0)) {
     headers = []; sheetData = []; showEmptyMessage('No data in this sheet.'); disableUI(true); syncUI(); return;
   }
 
   headers = json[0].map(h => h == null ? '' : String(h));
-  sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
+  // sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
+
+sheetData = json.slice(1).map(row =>
+  (Array.isArray(row) ? row : []).map(cell => {
+    if (cell instanceof Date) {
+      // Format pure Date objects
+      const d = cell;
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${dd}-${mm}-${yyyy}`;
+    }
+
+    // Handle numbers that are Excel date serials
+    if (typeof cell === "number" && cell > 20000 && cell < 60000) {
+      const excelEpoch = new Date(1899, 11, 30);
+      const parsed = new Date(excelEpoch.getTime() + Math.floor(cell) * 86400000);
+      const dd = String(parsed.getDate()).padStart(2, "0");
+      const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+      const yyyy = parsed.getFullYear();
+      return `${dd}-${mm}-${yyyy}`;
+    }
+
+    // Replace slashes (1/7/19 → 01-07-2019) if string looks like a date
+    if (typeof cell === "string" && /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell.trim())) {
+      const [d, m, y] = cell.split("/");
+      const dd = String(d).padStart(2, "0");
+      const mm = String(m).padStart(2, "0");
+      const yyyy = y.length === 2 ? "20" + y : y;
+      return `${dd}-${mm}-${yyyy}`;
+    }
+
+    // Otherwise, return as-is
+    return cell ?? "";
+  })
+);
+
   currentIndex = 0; matches = []; matchIndex = 0;
 
   // visible headers preference
@@ -432,12 +469,7 @@ function updateViewButtons(){
 
 /* ---------- Export (CSV/XLSX) ---------- */
 function showExportMenu(){
-  // simple prompt: CSV or XLSX
-  const choice = prompt('Type "csv" to download CSV or "xlsx" to download Excel file. (csv/xlsx)', 'csv');
-  if (!choice) return;
-  if (choice.toLowerCase() === 'csv') exportVisibleCSV();
-  else if (choice.toLowerCase() === 'xlsx') exportVisibleXLSX();
-  else alert('Unknown option.');
+  exportVisibleXLSX();
 }
 
 function getDisplayedRowsAndHeaders(){
