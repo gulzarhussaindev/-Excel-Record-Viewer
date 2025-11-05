@@ -1,182 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8" />
-      <title>Excel Viewer</title>
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Viewer</title>
 
-      <!-- Meta Tags for SEO + WhatsApp/Facebook/Twitter -->
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="title" content="Excel Record Viewer" />
-      <meta
-         name="description"
-         content="A simple, secure, and elegant Excel Record Viewer created by Gulzar Hussain. Upload Excel files and browse records beautifully, one by one."
-      />
-      <meta
-         name="keywords"
-         content="Excel Viewer, Spreadsheet Viewer, XLSX, CSV, XLS, File Viewer, Gulzar Hussain, UOL"
-      />
-      <meta name="author" content="Gulzar Hussain" />
+  <!-- Meta Tags for SEO + WhatsApp/Facebook/Twitter -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="Excel Record Viewer">
+  <meta name="description" content="A simple, secure, and elegant Excel Record Viewer created by Gulzar Hussain. Upload Excel files and browse records beautifully, one by one.">
+  <meta name="keywords" content="Excel Viewer, Spreadsheet Viewer, XLSX, CSV, XLS, File Viewer, Gulzar Hussain, UOL">
+  <meta name="author" content="Gulzar Hussain">
 
-      <!-- Open Graph (WhatsApp, Facebook) -->
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content="Excel Record Viewer" />
-      <meta
-         property="og:description"
-         content="Upload and browse Excel records in a clean, user-friendly viewer developed by Gulzar Hussain."
-      />
-      <meta
-         property="og:image"
-         content="https://apps.uol.ac.in/assets/icons/icon-192.png"
-      />
-      <meta property="og:url" content="https://apps.uol.ac.in" />
-      <meta property="og:site_name" content="Excel Record Viewer" />
+  <!-- Open Graph (WhatsApp, Facebook) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Excel Record Viewer">
+  <meta property="og:description" content="Upload and browse Excel records in a clean, user-friendly viewer developed by Gulzar Hussain.">
+  <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-192.png">
+  <meta property="og:url" content="https://apps.uol.ac.in">
+  <meta property="og:site_name" content="Excel Record Viewer">
 
-      <!-- Twitter Card -->
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="Excel Record Viewer" />
-      <meta
-         name="twitter:description"
-         content="Easily view and navigate Excel files — developed by Gulzar Hussain."
-      />
-      <meta
-         name="twitter:image"
-         content="https://apps.uol.ac.in/assets/icons/icon-192.png"
-      />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Excel Record Viewer">
+  <meta name="twitter:description" content="Easily view and navigate Excel files — developed by Gulzar Hussain.">
+  <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-192.png">
 
-      <!-- Favicon -->
-      <link
-         rel="icon"
-         type="image/png"
-         href="https://apps.uol.ac.in/assets/icons/icon-192.png"
-      />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://apps.uol.ac.in/assets/icons/icon-192.png">
 
-      <!-- Styles & Library -->
-      <link rel="stylesheet" href="style.css" />
-      <link rel="manifest" href="manifest.json" />
-      <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-      <!-- Google tag (gtag.js) -->
-      <script
-         async
-         src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"
-      ></script>
-      <script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag() {
-            dataLayer.push(arguments);
-         }
-         gtag("js", new Date());
+  <!-- Styles & Library -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SHDN3XWHYZ');
+  </script>
+</head>
 
-         gtag("config", "G-SHDN3XWHYZ");
-      </script>
-   </head>
 
-   <body>
-      <div class="container">
-         <div class="header">
-            <h2>Excel Record Viewer</h2>
-            <button
-               id="installBtn"
-               class="install-top-btn"
-               style="display: none"
-            >
-               📲 Install App
-            </button>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Excel Record Viewer</h2>
 
-            <!-- Modal (place at bottom before script tags) -->
-            <div id="headerModal" class="modal">
-               <div class="modal-content">
-                  <h3>Select Fields to Display</h3>
-                  <div class="modal-actions">
-                     <button id="selectAllBtn">Select All</button>
-                     <button id="unselectAllBtn">Unselect All</button>
-                     <button id="closeModalBtn">Close</button>
-                  </div>
-                  <div id="headerOptions"></div>
-               </div>
-            </div>
-         </div>
-
-         <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
-         <div
-            id="sheetSelectorContainer"
-            style="display: none; margin-top: 10px"
-         >
-            <label for="sheetSelector">Select sheet:</label>
-            <select id="sheetSelector"></select>
-         </div>
-         <button id="selectFieldsBtn" class="install-top-btn">
-            Select Fields
-         </button>
-         <hr />
-
-         <div class="search">
-            <input
-               type="number"
-               id="searchIndex"
-               placeholder="Go to row #"
-               disabled
-            />
-            <button id="goBtn" disabled>Go</button>
-         </div>
-
-         <div class="filter">
-            <label for="filterColumn">Filter by:</label>
-            <select id="filterColumn" disabled></select>
-            <input
-               type="text"
-               id="filterValue"
-               placeholder="Enter value to search"
-               disabled
-            />
-            <button id="filterBtn" disabled>Search</button>
-         </div>
-
-         <div id="filterInfo" class="filter-info" style="display: none"></div>
-
-         <!-- Centered No Record Message -->
-         <div id="recordViewer" class="card">
-            <div class="no-record">📄 No record loaded.</div>
-         </div>
-
-         <div class="nav">
-            <button id="prevBtn" disabled>Previous</button>
-            <button id="nextBtn" disabled>Next</button>
-         </div>
-
-         <footer class="footer">
-            <div class="footer-content">
-               Developed by
-               <strong>
-                  <a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">
-                     Gulzar Hussain
-                  </a> </strong
-               >, Sr. Tech Assistant, <span>UOL</span>
-            </div>
-         </footer>
+      <div class="header-actions">
+        <button id="selectFieldsBtn" class="install-top-btn" title="Select fields to show">Fields</button>
+        <button id="toggleTableBtn" class="install-top-btn" title="Switch to table view" style="display:none;">Show Table</button>
+        <button id="exportBtn" class="install-top-btn" title="Export visible data" style="display:none;">Export ▼</button>
+        <button id="installBtn" class="install-top-btn" style="display:none;">
+          📲 Install App
+        </button>
       </div>
-      <script>
-         // Handle install prompt
-         let deferredPrompt;
-         const installBtn = document.getElementById("installBtn");
 
-         window.addEventListener("beforeinstallprompt", (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = "inline-block";
-         });
+      <!-- Modal (place at bottom before script tags) -->
+      <div id="headerModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+          <h3>Select Fields to Display</h3>
+          <div class="modal-actions">
+            <button id="selectAllBtn" type="button">Select All</button>
+            <button id="unselectAllBtn" type="button">Unselect All</button>
+            <button id="closeModalBtn" type="button">Close</button>
+          </div>
+          <div id="headerOptions"></div>
+        </div>
+      </div>
+    </div>
 
-         installBtn.addEventListener("click", async () => {
-            if (deferredPrompt) {
-               deferredPrompt.prompt();
-               const choice = await deferredPrompt.userChoice;
-               if (choice.outcome === "accepted") {
-                  console.log("App installed");
-               }
-               installBtn.style.display = "none";
-               deferredPrompt = null;
-            }
-         });
-      </script>
-      <script src="script.js"></script>
-   </body>
+    <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
+    <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
+      <label for="sheetSelector">Select sheet:</label>
+      <select id="sheetSelector"></select>
+    </div>
+
+    <hr>
+
+    <div class="search">
+      <input type="number" id="searchIndex" placeholder="Go to row #" disabled>
+      <button id="goBtn" disabled>Go</button>
+    </div>
+
+    <div class="filter">
+      <label for="filterColumn">Filter by:</label>
+      <select id="filterColumn" disabled></select>
+      <input type="text" id="filterValue" placeholder="Enter value to search" disabled>
+      <button id="filterBtn" disabled>Search</button>
+    </div>
+
+    <div id="filterInfo" class="filter-info" style="display:none;"></div>
+    <div id="matchInfo" style="display:none;"></div>
+
+    <!-- Record container: form view and table view (toggle) -->
+    <div id="recordViewer" class="card">
+      <div class="no-record">📄 No record loaded.</div>
+    </div>
+
+    <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;">
+      <!-- table inserted here -->
+    </div>
+
+    <div class="nav">
+      <button id="prevBtn" disabled>Previous</button>
+      <button id="nextBtn" disabled>Next</button>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-content">
+        Developed by 
+        <strong>
+          <a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">
+            Gulzar Hussain
+          </a>
+        </strong>, 
+        Sr. Tech Assistant, <span>UOL</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- <script>
+    // Handle install prompt
+    let deferredPrompt;
+    const installBtn = document.getElementById("installBtn");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-block";
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === "accepted") {
+          console.log("App installed");
+        }
+        installBtn.style.display = "none";
+        deferredPrompt = null;
+      }
+    });
+  </script> -->
+
+  <script src="script.js"></script>
+</body>
+
 </html>

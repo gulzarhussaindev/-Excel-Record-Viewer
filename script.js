@@ -1,13 +1,14 @@
-/* script.js — corrected & synced UI + immediate arrow-key navigation */
+/* Final script.js - adds Table View + Export (CSV/XLSX) + uses selected headers for both views */
+/* Requires XLSX (sheetjs) which is already included in HTML head */
 
-let workbook, sheetData = [],
-  headers = [],
-  currentIndex = 0;
-let matches = [],
-  matchIndex = 0;
+let workbook, sheetData = [], headers = [], currentIndex = 0;
+let matches = [], matchIndex = 0;
+let visibleHeaders = JSON.parse(localStorage.getItem('visibleHeaders') || 'null') || [];
 
+// Elements
 const fileInput = document.getElementById('fileInput');
-const sheetSelector = document.createElement('select');
+const sheetSelector = document.getElementById('sheetSelector');
+const sheetSelectorContainer = document.getElementById('sheetSelectorContainer');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const goBtn = document.getElementById('goBtn');
@@ -16,514 +17,477 @@ const searchIndexInput = document.getElementById('searchIndex');
 const filterColumnSelect = document.getElementById('filterColumn');
 const filterValueInput = document.getElementById('filterValue');
 const recordViewer = document.getElementById('recordViewer');
-const container = document.querySelector('.container');
+const tableViewContainer = document.getElementById('tableViewContainer');
+const filterInfoDiv = document.getElementById('filterInfo');
+const matchInfoDiv = document.getElementById('matchInfo');
 
+const selectFieldsBtn = document.getElementById('selectFieldsBtn');
+const headerModal = document.getElementById('headerModal');
+const headerOptions = document.getElementById('headerOptions');
+const selectAllBtn = document.getElementById('selectAllBtn');
+const unselectAllBtn = document.getElementById('unselectAllBtn');
+const closeModalBtn = document.getElementById('closeModalBtn');
 
-let visibleHeaders = JSON.parse(localStorage.getItem("visibleHeaders")) || [];
+const toggleTableBtn = document.getElementById('toggleTableBtn');
+const exportBtn = document.getElementById('exportBtn');
+const installBtn = document.getElementById('installBtn');
 
-// Modal elements
-const selectFieldsBtn = document.getElementById("selectFieldsBtn");
-const headerModal = document.getElementById("headerModal");
-const headerOptions = document.getElementById("headerOptions");
-const selectAllBtn = document.getElementById("selectAllBtn");
-const unselectAllBtn = document.getElementById("unselectAllBtn");
-const closeModalBtn = document.getElementById("closeModalBtn");
+// focusable body for keyboard navigation
+if (!document.body.hasAttribute('tabindex')) document.body.setAttribute('tabindex', '-1');
 
+// view mode state: 'form' or 'table'
+let viewMode = localStorage.getItem('viewMode') || 'form';
 
-sheetSelector.id = 'sheetSelector';
-sheetSelector.style.marginBottom = '10px';
-sheetSelector.style.display = 'none';
-container.insertBefore(sheetSelector, container.querySelector('hr'));
-
-// make body programmatically focusable so we can reliably focus it
-if (!document.body.hasAttribute('tabindex')) {
-  document.body.setAttribute('tabindex', '-1');
-}
-
+// UI initial state
 disableUI(true);
 
 // Event listeners
 fileInput.addEventListener('change', handleFile);
-prevBtn.addEventListener('click', () => showRecord(currentIndex - 1));
-nextBtn.addEventListener('click', () => showRecord(currentIndex + 1));
+prevBtn.addEventListener('click', () => navigateRelative(-1));
+nextBtn.addEventListener('click', () => navigateRelative(1));
 goBtn.addEventListener('click', goToRecord);
 filterBtn.addEventListener('click', filterRecords);
 sheetSelector.addEventListener('change', () => loadSheet(sheetSelector.value));
 
-searchIndexInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') goToRecord();
-});
-filterValueInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') filterRecords();
+searchIndexInput.addEventListener('keydown', e => { if (e.key === 'Enter') goToRecord(); });
+filterValueInput.addEventListener('keydown', e => { if (e.key === 'Enter') filterRecords(); });
+
+// field selector modal
+selectFieldsBtn.addEventListener('click', openHeaderModal);
+closeModalBtn.addEventListener('click', () => { headerModal.style.display = 'none'; headerModal.setAttribute('aria-hidden','true'); });
+selectAllBtn.addEventListener('click', () => { visibleHeaders = [...headers]; saveVisibleHeaders(); renderHeaderOptions(); showCurrentView(); });
+unselectAllBtn.addEventListener('click', () => { visibleHeaders = []; saveVisibleHeaders(); renderHeaderOptions(); showCurrentView(); });
+window.addEventListener('click', (e) => { if (e.target === headerModal) { headerModal.style.display = 'none'; headerModal.setAttribute('aria-hidden','true'); }});
+
+// toggle table view
+toggleTableBtn.addEventListener('click', () => {
+  viewMode = (viewMode === 'form') ? 'table' : 'form';
+  localStorage.setItem('viewMode', viewMode);
+  updateViewButtons();
+  showCurrentView();
 });
 
-recordViewer.addEventListener('click', e => {
+// export
+exportBtn.addEventListener('click', () => {
+  showExportMenu();
+});
+
+// PWA install (kept from earlier)
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
+});
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  if (choice.outcome === 'accepted') {
+    installBtn.textContent = '✅ Installed';
+    installBtn.disabled = true;
+  }
+  deferredPrompt = null;
+});
+window.addEventListener('appinstalled', () => {
+  installBtn.textContent = '✅ Installed'; installBtn.disabled = true;
+});
+
+// keyboard nav
+document.addEventListener('keydown', (e) => {
+  const tag = e.target && e.target.tagName && e.target.tagName.toUpperCase();
+  if (!sheetData || sheetData.length === 0) return;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.ctrlKey || e.metaKey) return;
+
+  if (e.key === 'ArrowRight') { e.preventDefault(); if (matches && matches.length) { if (matchIndex < matches.length -1) { matchIndex++; showRecord(matches[matchIndex]); updateMatchInfo(true); } } else { if (currentIndex < sheetData.length -1) showRecord(currentIndex+1); } }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); if (matches && matches.length) { if (matchIndex > 0) { matchIndex--; showRecord(matches[matchIndex]); updateMatchInfo(true); } } else { if (currentIndex > 0) showRecord(currentIndex-1); } }
+});
+
+// click expand in form view (delegation)
+recordViewer.addEventListener('click', (e) => {
   if (e.target.classList.contains('expand-btn')) {
     const field = e.target.closest('.field');
-    const fieldValue = field.querySelector('.field-value');
-    const fullText = field.querySelector('.full-text').textContent;
-
-    if (e.target.textContent === 'Expand') {
-      fieldValue.textContent = fullText;
-      e.target.textContent = 'Collapse';
-    } else {
-      fieldValue.textContent = fullText.slice(0, 60) + '...';
-      e.target.textContent = 'Expand';
-    }
+    const fv = field.querySelector('.field-value');
+    const full = field.querySelector('.full-text').textContent;
+    if (e.target.textContent === 'Expand') { fv.textContent = full; e.target.textContent = 'Collapse'; } else { fv.textContent = full.slice(0,60) + '...'; e.target.textContent = 'Expand'; }
   }
 });
 
-function handleFile(e) {
-  const file = e.target.files[0];
+// table row click -> open form view
+tableViewContainer.addEventListener('click', (e) => {
+  const tr = e.target.closest('tr[data-row-index]');
+  if (!tr) return;
+  const idx = parseInt(tr.dataset.rowIndex,10);
+  if (!isNaN(idx)) { viewMode = 'form'; localStorage.setItem('viewMode', viewMode); updateViewButtons(); showRecord(idx); }
+});
+
+/* ---------- Helpers: storage ---------- */
+function saveVisibleHeaders(){ try { localStorage.setItem('visibleHeaders', JSON.stringify(visibleHeaders)); } catch(e){} }
+function loadVisibleHeaders(){ try { const v = JSON.parse(localStorage.getItem('visibleHeaders')); return Array.isArray(v) ? v : null; } catch(e){ return null; } }
+
+/* ---------- File handling ---------- */
+function handleFile(e){
+  const file = e.target.files?.[0];
   if (!file) return;
-
   const reader = new FileReader();
-  reader.onload = (event) => {
-    const data = new Uint8Array(event.target.result);
-    workbook = XLSX.read(data, {
-      type: 'array'
-    });
+  reader.onload = (ev) => {
+    try {
+      const data = new Uint8Array(ev.target.result);
+      workbook = XLSX.read(data, { type: 'array' });
+    } catch(err) { showEmptyMessage('Unable to read file.'); return; }
 
-    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      showEmptyMessage("No sheets found in file.");
-      return;
-    }
+    if (!workbook.SheetNames || workbook.SheetNames.length === 0) { showEmptyMessage('No sheets found in file.'); return; }
 
-    // Populate sheet selector if multiple sheets
-    sheetSelector.innerHTML = '';
-    workbook.SheetNames.forEach(name => {
-      const opt = document.createElement('option');
-      opt.value = name;
-      opt.textContent = name;
-      sheetSelector.appendChild(opt);
-    });
+    // sheet selector
+    sheetSelector.innerHTML = ''; workbook.SheetNames.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sheetSelector.appendChild(opt); });
+    sheetSelectorContainer.style.display = workbook.SheetNames.length > 1 ? 'block' : 'none';
 
-    sheetSelector.style.display = workbook.SheetNames.length > 1 ? 'inline-block' : 'none';
-
-    // Load first sheet
     loadSheet(workbook.SheetNames[0]);
     disableUI(false);
-
-    // ensure body is focused so keyboard navigation works immediately
-    try {
-      document.body.focus();
-    } catch (err) {
-      /* ignore */ }
-
-    // final UI sync
+    try { document.body.focus(); } catch(e){}
     syncUI();
   };
   reader.readAsArrayBuffer(file);
 }
 
-function loadSheet(name) {
+function loadSheet(name){
   const sheet = workbook.Sheets[name];
-  const json = XLSX.utils.sheet_to_json(sheet, {
-    header: 1
-  });
-
+  const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
   if (!Array.isArray(json) || json.length === 0 || (Array.isArray(json[0]) && json[0].length === 0)) {
-    headers = [];
-    sheetData = [];
-    showEmptyMessage("No records found in this sheet.");
-    disableUI(true);
-    syncUI();
-    return;
+    headers = []; sheetData = []; showEmptyMessage('No data in this sheet.'); disableUI(true); syncUI(); return;
   }
 
   headers = json[0].map(h => h == null ? '' : String(h));
-
-  if (!visibleHeaders.length) visibleHeaders = [...headers];
-  renderHeaderOptions();
-
   sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
-  currentIndex = 0;
-  matches = [];
-  matchIndex = 0;
+  currentIndex = 0; matches = []; matchIndex = 0;
+
+  // visible headers preference
+  const saved = loadVisibleHeaders();
+  if (saved && Array.isArray(saved)) {
+    // keep intersection
+    visibleHeaders = saved.filter(h => headers.includes(h));
+    if (visibleHeaders.length === 0) visibleHeaders = headers.slice();
+  } else {
+    visibleHeaders = headers.slice();
+  }
 
   populateFilterDropdown();
-  showRecord(currentIndex);
-
-  // ensure body is focused so arrow keys work immediately
-  try {
-    document.body.focus();
-  } catch (err) {
-    /* ignore */ }
-
+  renderHeaderOptions();
+  updateViewButtons();
+  showCurrentView();
   syncUI();
 }
 
-function populateFilterDropdown() {
+/* ---------- UI helpers ---------- */
+function disableUI(disabled){
+  [prevBtn,nextBtn,goBtn,filterBtn,searchIndexInput,filterColumnSelect,filterValueInput].forEach(el => el.disabled = disabled);
+  toggleTableBtn.style.display = disabled ? 'none' : 'inline-block';
+  exportBtn.style.display = disabled ? 'none' : 'inline-block';
+}
+
+function showEmptyMessage(msg){
+  recordViewer.style.display = 'block';
+  tableViewContainer.style.display = 'none';
+  recordViewer.className = 'card';
+  recordViewer.innerHTML = '';
+  const box = document.createElement('div'); box.className = 'no-record'; box.textContent = msg; recordViewer.appendChild(box);
+  matchInfoDiv.style.display = 'none'; filterInfoDiv.style.display = 'none';
+}
+
+/* ---------- Filters ---------- */
+function populateFilterDropdown(){
   filterColumnSelect.innerHTML = '';
-  headers.forEach((h, i) => {
-
-
-    // your existing code for displaying field
-
-
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = h || `Column ${i + 1}`;
-    filterColumnSelect.appendChild(opt);
-
+  headers.forEach((h,i) => {
+    const opt = document.createElement('option'); opt.value = i; opt.textContent = h || `Column ${i+1}`; filterColumnSelect.appendChild(opt);
   });
 }
 
-function showRecord(index) {
-  // clamp index
-  if (!sheetData || sheetData.length === 0) {
-    showEmptyMessage("No records.");
-    return;
-  }
+/* ---------- Field selector modal ---------- */
+function openHeaderModal(){
+  renderHeaderOptions();
+  headerModal.style.display = 'flex';
+  headerModal.setAttribute('aria-hidden','false');
+}
+
+function renderHeaderOptions(){
+  headerOptions.innerHTML = '';
+  if (!headers || !headers.length) { headerOptions.textContent = 'No headers found.'; return; }
+  headers.forEach((h) => {
+    const div = document.createElement('div');
+    const cb = document.createElement('input'); cb.type='checkbox'; cb.value = h; cb.checked = visibleHeaders.includes(h);
+    cb.addEventListener('change', (e) => {
+      if (e.target.checked) { if (!visibleHeaders.includes(h)) visibleHeaders.push(h); }
+      else { visibleHeaders = visibleHeaders.filter(x=>x!==h); }
+      saveVisibleHeaders(); showCurrentView();
+    });
+    const label = document.createElement('label'); label.style.marginLeft='6px'; label.textContent = h;
+    div.appendChild(cb); div.appendChild(label); headerOptions.appendChild(div);
+  });
+}
+
+/* ---------- Rendering Form View ---------- */
+function showRecord(index){
+  if (!sheetData || sheetData.length === 0) { showEmptyMessage('0 records.'); return; }
   if (index < 0) index = 0;
   if (index >= sheetData.length) index = sheetData.length - 1;
-
   currentIndex = index;
-  const record = sheetData[currentIndex];
 
-  // render record safely using DOM methods
+  viewMode = 'form'; localStorage.setItem('viewMode', viewMode);
+  updateViewButtons();
+
+  // recordViewer.style.display = 'block';
+  tableViewContainer.style.display = 'none';
+  recordViewer.className = 'card form-view';
   recordViewer.innerHTML = '';
-  recordViewer.classList.remove('empty-message');
 
   const headerDiv = document.createElement('div');
-  headerDiv.textContent = `Record ${currentIndex + 1} of ${sheetData.length}`;
   headerDiv.style.gridColumn = '1 / -1';
   headerDiv.style.marginBottom = '6px';
   headerDiv.style.fontWeight = '600';
+  headerDiv.textContent = `Record ${currentIndex + 1} of ${sheetData.length}`;
   recordViewer.appendChild(headerDiv);
 
-  headers.forEach((header, i) => {
-    if (visibleHeaders.includes(header)) {
+  const record = sheetData[currentIndex];
+  const fieldsToRender = (visibleHeaders && visibleHeaders.length) ? visibleHeaders : headers;
 
-      const value = record[i] != null ? String(record[i]) : '';
-      const fieldDiv = document.createElement('div');
-      fieldDiv.className = 'field';
-
-      const labelSpan = document.createElement('span');
-      labelSpan.className = 'label';
-      labelSpan.textContent = header + ':';
-
-      const fieldValue = document.createElement('span');
-      fieldValue.className = 'field-value';
-
-      const fullTextSpan = document.createElement('span');
-      fullTextSpan.className = 'full-text';
-      fullTextSpan.style.display = 'none';
-      fullTextSpan.textContent = value;
-
-      const maxLength = 60;
-      if (value.length > maxLength) {
-        fieldValue.textContent = value.slice(0, maxLength) + '...';
-        const expandBtn = document.createElement('button');
-        expandBtn.className = 'expand-btn';
-        expandBtn.type = 'button';
-        expandBtn.textContent = 'Expand';
-        fieldDiv.append(labelSpan, fieldValue, expandBtn, fullTextSpan);
-      } else {
-        fieldValue.textContent = value;
-        fieldDiv.append(labelSpan, fieldValue);
-      }
-
-      recordViewer.appendChild(fieldDiv);
-    }
+  fieldsToRender.forEach(h => {
+    const i = headers.indexOf(h);
+    if (i === -1) return;
+    const value = record[i] != null ? String(record[i]) : '';
+    const fieldDiv = document.createElement('div'); fieldDiv.className = 'field';
+    const labelSpan = document.createElement('span'); labelSpan.className = 'label'; labelSpan.textContent = h + ':';
+    const fieldValue = document.createElement('span'); fieldValue.className = 'field-value';
+    const fullText = document.createElement('span'); fullText.className='full-text'; fullText.style.display='none'; fullText.textContent = value;
+    const maxLength = 80;
+    if (value.length > maxLength) { fieldValue.textContent = value.slice(0,maxLength) + '...'; const exp = document.createElement('button'); exp.className='expand-btn'; exp.type='button'; exp.textContent='Expand'; fieldDiv.append(labelSpan, fieldValue, exp, fullText); }
+    else { fieldValue.textContent = value; fieldDiv.append(labelSpan, fieldValue); }
+    recordViewer.appendChild(fieldDiv);
   });
 
-  // update UI
   updateNavButtons();
   updateMatchInfo();
   syncUI();
 }
 
-function updateNavButtons() {
-  // If a filter is active we may want different behavior, but keep basic logic for raw prev/next
-  prevBtn.disabled = (currentIndex <= 0);
-  nextBtn.disabled = (currentIndex >= sheetData.length - 1);
+/* ---------- Rendering Table View ---------- */
+function renderTableView(){
+  tableViewContainer.innerHTML = '';
+  tableViewContainer.style.display = 'block';
+  recordViewer.style.display = 'none';
+
+  if (!sheetData || sheetData.length === 0) { const box = document.createElement('div'); box.className='no-record'; box.textContent='No records to show.'; tableViewContainer.appendChild(box); return; }
+
+  const fieldsToRender = (visibleHeaders && visibleHeaders.length) ? visibleHeaders : headers;
+
+  const table = document.createElement('table'); table.className='table';
+  const thead = document.createElement('thead'); const trHead = document.createElement('tr');
+  fieldsToRender.forEach(h => {
+    const th = document.createElement('th'); th.textContent = h; th.style.userSelect='none';
+    // optional: sort on click
+    th.addEventListener('click', () => sortByColumn(h));
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+
+  // If matches exist (filter), show only matched rows, otherwise show all rows
+  const rowsToShow = (matches && matches.length) ? matches.map(i=>sheetData[i]) : sheetData;
+  const rowIndexes = (matches && matches.length) ? matches.slice() : sheetData.map((_,i)=>i);
+
+  rowsToShow.forEach((row, idx) => {
+    const tr = document.createElement('tr');
+    tr.dataset.rowIndex = rowIndexes[idx]; // store original index so clicking opens that record
+    fieldsToRender.forEach(h => {
+      const colIndex = headers.indexOf(h);
+      const td = document.createElement('td'); td.textContent = (colIndex > -1 && row[colIndex] != null) ? String(row[colIndex]) : '';
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  tableViewContainer.appendChild(table);
+
+  // update match info visibility
+  if (matches && matches.length) { matchInfoDiv.style.display='block'; matchInfoDiv.textContent = `Found ${matches.length} matches. Showing ${matchIndex+1} of ${matches.length}.`; }
+  else { matchInfoDiv.style.display='none'; }
 }
 
-function disableUI(disabled) {
-  prevBtn.disabled = disabled;
-  nextBtn.disabled = disabled;
-  goBtn.disabled = disabled;
-  filterBtn.disabled = disabled;
-  searchIndexInput.disabled = disabled;
-  filterColumnSelect.disabled = disabled;
-  filterValueInput.disabled = disabled;
+/* ---------- Sorting used in table view ---------- */
+function sortByColumn(headerName){
+  const colIndex = headers.indexOf(headerName);
+  if (colIndex === -1) return;
+  const lastSort = tableViewContainer.dataset.lastSort || '';
+  let dir = 'asc';
+  if (lastSort === headerName) dir = tableViewContainer.dataset.lastDir === 'asc' ? 'desc' : 'asc';
+  tableViewContainer.dataset.lastSort = headerName; tableViewContainer.dataset.lastDir = dir;
+
+  sheetData.sort((a,b) => {
+    const va = a[colIndex] != null ? a[colIndex] : '';
+    const vb = b[colIndex] != null ? b[colIndex] : '';
+    const na = parseFloat(String(va).replace(/[^0-9.\-]/g,'')), nb = parseFloat(String(vb).replace(/[^0-9.\-]/g,''));
+    if (!isNaN(na) && !isNaN(nb)) return dir === 'asc' ? na - nb : nb - na;
+    const sa = String(va).toLowerCase(), sb = String(vb).toLowerCase();
+    if (sa < sb) return dir === 'asc' ? -1 : 1;
+    if (sa > sb) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  renderTableView();
 }
 
-function goToRecord() {
-  const i = parseInt(searchIndexInput.value, 10);
-  if (!isNaN(i) && i > 0 && i <= sheetData.length) {
-    showRecord(i - 1);
+/* ---------- Navigation & filters ---------- */
+function navigateRelative(delta){
+  if (matches && matches.length) {
+    matchIndex = Math.max(0, Math.min(matches.length-1, matchIndex + (delta>0?1:-1)));
+    showRecord(matches[matchIndex]);
+    updateMatchInfo(true);
   } else {
-    alert("Invalid row number.");
+    showRecord(currentIndex + delta);
   }
 }
 
-function filterRecords() {
-  if (!sheetData || sheetData.length === 0) {
-    alert("No data loaded.");
-    return;
-  }
+function updateNavButtons(){
+  if (matches && matches.length) { prevBtn.disabled = matchIndex <= 0; nextBtn.disabled = matchIndex >= matches.length -1; }
+  else { prevBtn.disabled = currentIndex <= 0; nextBtn.disabled = currentIndex >= sheetData.length -1; }
+}
 
-  const colIndex = parseInt(filterColumnSelect.value, 10);
+function goToRecord(){
+  const i = parseInt(searchIndexInput.value, 10);
+  if (!isNaN(i) && i > 0 && i <= sheetData.length) showRecord(i-1);
+  else alert('Invalid row number.');
+}
+
+function filterRecords(){
+  if (!sheetData || sheetData.length === 0) { alert('No data loaded.'); return; }
+  const colIndex = parseInt(filterColumnSelect.value,10);
   const raw = String(filterValueInput.value || '');
-  const searchValue = raw.trim().toLowerCase().replace(/\s+/g, ' ');
-  if (!searchValue) {
-    alert("Please enter a value to search.");
-    return;
-  }
+  const searchValue = raw.trim().toLowerCase().replace(/\s+/g,' ');
+  if (!searchValue) { alert('Please enter a value to search.'); return; }
 
   matches = [];
   sheetData.forEach((row, idx) => {
-    const cell = (row[colIndex] ?? '').toString().toLowerCase().replace(/\s+/g, ' ');
+    const cell = (row[colIndex] ?? '').toString().toLowerCase().replace(/\s+/g,' ');
     if (cell.includes(searchValue)) matches.push(idx);
   });
 
-  if (matches.length === 0) {
-    alert("No matching records found.");
-    return;
-  }
-
+  if (!matches.length) { alert('No matching records found.'); return; }
   matchIndex = 0;
   showRecord(matches[matchIndex]);
-  updateMatchInfo(true);
-  syncUI();
+
+  filterInfoDiv.style.display = 'block'; filterInfoDiv.textContent = `Filter: ${headers[colIndex]} contains "${raw}"`;
+  updateMatchInfo(true); syncUI();
 }
 
-function updateMatchInfo(showClear = false) {
-  let infoDiv = document.getElementById('matchInfo');
-  if (!infoDiv) {
-    infoDiv = document.createElement('div');
-    infoDiv.id = 'matchInfo';
-    infoDiv.style.marginTop = '8px';
-    container.insertBefore(infoDiv, recordViewer);
-  }
-
-  if (matches.length > 0) {
-    // build text safely with DOM
-    infoDiv.innerHTML = ''; // clear
-    const text = document.createElement('span');
-    text.textContent = `Found ${matches.length} match(es). Showing ${matchIndex + 1} of ${matches.length} (Row ${matches[matchIndex] + 1})`;
-    infoDiv.appendChild(text);
-
-    if (showClear) {
-      const prevMatchBtn = document.createElement('button');
-      prevMatchBtn.id = 'prevMatchBtn';
-      prevMatchBtn.type = 'button';
-      prevMatchBtn.textContent = 'Prev Match';
-      prevMatchBtn.style.marginLeft = '10px';
-      prevMatchBtn.addEventListener('click', () => {
-        if (matchIndex > 0) matchIndex--;
-        showRecord(matches[matchIndex]);
-        updateMatchInfo(true);
-      });
-
-      const nextMatchBtn = document.createElement('button');
-      nextMatchBtn.id = 'nextMatchBtn';
-      nextMatchBtn.type = 'button';
-      nextMatchBtn.textContent = 'Next Match';
-      nextMatchBtn.style.marginLeft = '8px';
-      nextMatchBtn.addEventListener('click', () => {
-        if (matchIndex < matches.length - 1) matchIndex++;
-        showRecord(matches[matchIndex]);
-        updateMatchInfo(true);
-      });
-
-      const clearBtn = document.createElement('button');
-      clearBtn.id = 'clearFilterBtn';
-      clearBtn.type = 'button';
-      clearBtn.textContent = 'Clear Filter';
-      clearBtn.style.marginLeft = '8px';
-      clearBtn.addEventListener('click', () => {
-        matches = [];
-        matchIndex = 0;
-        filterValueInput.value = '';
-        showRecord(currentIndex);
-        updateMatchInfo();
-        syncUI();
-      });
-
-      infoDiv.appendChild(prevMatchBtn);
-      infoDiv.appendChild(nextMatchBtn);
-      infoDiv.appendChild(clearBtn);
-    }
-  } else {
-    infoDiv.textContent = '';
+function updateMatchInfo(showClear=false){
+  if (!matches || matches.length === 0) { matchInfoDiv.style.display='none'; return; }
+  matchInfoDiv.style.display='block';
+  matchInfoDiv.textContent = `Found ${matches.length} match(es). Showing ${matchIndex+1} of ${matches.length} (out of ${sheetData.length})`;
+  if (showClear) {
+    // could add clear controls here if desired
   }
 }
 
-function showEmptyMessage(msg) {
-  recordViewer.className = 'card';
-  recordViewer.innerHTML = '';
-  const box = document.createElement('div');
-  box.className = 'no-record';
-  box.textContent = msg;
-  recordViewer.appendChild(box);
-}
-
-/* syncUI: central function to ensure nav buttons, filter UI, and focus are consistent */
-function syncUI() {
-  // update nav buttons considering active filter matches
-  if (matches && matches.length > 0) {
-    prevBtn.disabled = (matchIndex <= 0);
-    nextBtn.disabled = (matchIndex >= matches.length - 1);
-  } else {
-    prevBtn.disabled = (currentIndex <= 0);
-    nextBtn.disabled = (currentIndex >= sheetData.length - 1);
-  }
-
-  // ensure controls enabled when data present
-  const hasData = (sheetData && sheetData.length > 0);
+/* ---------- UI sync ---------- */
+function syncUI(){
+  const hasData = sheetData && sheetData.length > 0;
   goBtn.disabled = !hasData;
   filterBtn.disabled = !hasData;
   searchIndexInput.disabled = !hasData;
   filterColumnSelect.disabled = !hasData;
   filterValueInput.disabled = !hasData;
-
-  // make sure arrow keys will work: focus the body (body is set tabindex="-1" above)
-  try {
-    document.body.focus();
-  } catch (err) {
-    /* ignore */ }
+  toggleTableBtn.style.display = hasData ? 'inline-block' : 'none';
+  exportBtn.style.display = hasData ? 'inline-block' : 'none';
+  updateNavButtons();
+  try { document.body.focus(); } catch(e){}
 }
 
-// ✅ Keyboard navigation: works immediately after file/sheet load
-document.addEventListener('keydown', (event) => {
-  // don't interfere when user types in inputs or textareas or selects
-  const tag = event.target && event.target.tagName && event.target.tagName.toUpperCase();
-  if (!sheetData || sheetData.length === 0) return;
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || event.ctrlKey || event.metaKey) return;
+/* ---------- Show current view based on viewMode ---------- */
+function showCurrentView(){
+  if (viewMode === 'table') { updateViewButtons(); renderTableView(); }
+  else { updateViewButtons(); showRecord(currentIndex); }
+}
 
-  if (event.key === 'ArrowRight') {
-    event.preventDefault();
-    // if filter active, navigate matches
-    if (matches && matches.length > 0) {
-      if (matchIndex < matches.length - 1) {
-        matchIndex++;
-        showRecord(matches[matchIndex]);
-        updateMatchInfo(true);
-      }
-    } else {
-      if (currentIndex < sheetData.length - 1) {
-        showRecord(currentIndex + 1);
-      }
-    }
-  } else if (event.key === 'ArrowLeft') {
-    event.preventDefault();
-    if (matches && matches.length > 0) {
-      if (matchIndex > 0) {
-        matchIndex--;
-        showRecord(matches[matchIndex]);
-        updateMatchInfo(true);
-      }
-    } else {
-      if (currentIndex > 0) {
-        showRecord(currentIndex - 1);
-      }
-    }
+function updateViewButtons(){
+  if (viewMode === 'table') {
+    toggleTableBtn.textContent = 'Show Form';
+    tableViewContainer.style.display = 'block';
+    recordViewer.style.display = 'none';
+
+    // Disable both buttons
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+  } else {
+    toggleTableBtn.textContent = 'Show Table';
+    tableViewContainer.style.display = 'none';
+    recordViewer.style.removeProperty('display');
+    //recordViewer.style.display = 'block';
+    // Disable both buttons
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
   }
-});
+}
 
-function renderHeaderOptions() {
-  headerOptions.innerHTML = "";
-  headers.forEach((header) => {
-    const div = document.createElement("div");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.value = header;
-    checkbox.checked = visibleHeaders.includes(header);
-    checkbox.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        if (!visibleHeaders.includes(header)) visibleHeaders.push(header);
-      } else {
-        visibleHeaders = visibleHeaders.filter((h) => h !== header);
-      }
-      saveHeaderPrefs();
-      showRecord(currentIndex); // refresh
+/* ---------- Export (CSV/XLSX) ---------- */
+function showExportMenu(){
+  // simple prompt: CSV or XLSX
+  const choice = prompt('Type "csv" to download CSV or "xlsx" to download Excel file. (csv/xlsx)', 'csv');
+  if (!choice) return;
+  if (choice.toLowerCase() === 'csv') exportVisibleCSV();
+  else if (choice.toLowerCase() === 'xlsx') exportVisibleXLSX();
+  else alert('Unknown option.');
+}
+
+function getDisplayedRowsAndHeaders(){
+  const cols = (visibleHeaders && visibleHeaders.length) ? visibleHeaders : headers;
+  const rowIndexes = (matches && matches.length) ? matches.slice() : sheetData.map((_,i) => i);
+  const rows = rowIndexes.map(i => sheetData[i].map(cell => cell != null ? String(cell) : ''));
+  return { cols, rowIndexes, rows };
+}
+
+function exportVisibleCSV(){
+  const { cols, rowIndexes } = getDisplayedRowsAndHeaders();
+  // build CSV rows for visible columns only
+  const lines = [];
+  lines.push(cols.map(c => `"${c.replace(/"/g,'""')}"`).join(','));
+  rowIndexes.forEach(i => {
+    const row = sheetData[i];
+    const vals = cols.map(h => {
+      const idx = headers.indexOf(h);
+      const v = (idx > -1 && row[idx] != null) ? String(row[idx]) : '';
+      return `"${v.replace(/"/g,'""')}"`;
     });
-    const label = document.createElement("label");
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(header));
-    div.appendChild(label);
-    headerOptions.appendChild(div);
+    lines.push(vals.join(','));
   });
+  const csv = lines.join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'export.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 
-// Listen for any change in header checkboxes
-// headerOptions.addEventListener('change', () => {
-//   // Get all checked headers
-//   const checkedHeaders = Array.from(document.querySelectorAll('#headerOptions input[type="checkbox"]:checked'))
-//     .map(cb => cb.value);
-
-//   // Save selection in localStorage so it persists
-//   localStorage.setItem('selectedHeaders', JSON.stringify(checkedHeaders));
-
-//   // ✅ Immediately refresh the current record view
-//   showRecord(currentIndex);
-// });
-
-
-// headerOptions.addEventListener("change", () => {
-//   updateSelectedHeaders();
-// });
-
-// // Handle "Select All" button
-// document.getElementById("selectAllBtn").addEventListener("click", () => {
-//   const checkboxes = headerOptions.querySelectorAll('input[type="checkbox"]');
-//   checkboxes.forEach(cb => cb.checked = true);
-
-//   localStorage.setItem('selectedHeaders', JSON.stringify(checkedHeaders));
-//   debugger
-//   showRecord(currentIndex);
-//   // updateSelectedHeaders();
-// });
-
-// // Handle "Unselect All" button
-// document.getElementById("unselectAllBtn").addEventListener("click", () => {
-//   const checkboxes = headerOptions.querySelectorAll('input[type="checkbox"]');
-//   checkboxes.forEach(cb => cb.checked = false);
-//   updateSelectedHeaders();
-// });
-
-// // Helper to save and refresh record view
-// function updateSelectedHeaders() {
-//   const checkedHeaders = Array.from(
-//     headerOptions.querySelectorAll('input[type="checkbox"]:checked')
-//   ).map(cb => cb.value);
-
-//   localStorage.setItem("selectedHeaders", JSON.stringify(checkedHeaders));
-
-//   // ✅ Immediately refresh displayed record
-//   showRecord(currentIndex);
-// }
-
-
-function saveHeaderPrefs() {
-  localStorage.setItem("visibleHeaders", JSON.stringify(visibleHeaders));
+function exportVisibleXLSX(){
+  const { cols, rowIndexes } = getDisplayedRowsAndHeaders();
+  const aoa = [];
+  aoa.push(cols);
+  rowIndexes.forEach(i => {
+    const row = sheetData[i];
+    const out = cols.map(h => {
+      const idx = headers.indexOf(h);
+      return (idx > -1 && row[idx] != null) ? row[idx] : '';
+    });
+    aoa.push(out);
+  });
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Export');
+  const wbout = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+  const blob = new Blob([wbout], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'export.xlsx'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 
-selectFieldsBtn.addEventListener("click", () => {
-  headerModal.style.display = "flex";
-});
-
-closeModalBtn.addEventListener("click", () => {
-  headerModal.style.display = "none";
-});
-
-window.onclick = (e) => {
-  if (e.target === headerModal) headerModal.style.display = "none";
-};
-
-selectAllBtn.addEventListener("click", () => {
-  visibleHeaders = [...headers];
-  saveHeaderPrefs();
-  renderHeaderOptions();
-  showRecord(currentIndex);
-});
-
-unselectAllBtn.addEventListener("click", () => {
-  visibleHeaders = [];
-  saveHeaderPrefs();
-  renderHeaderOptions();
-  showRecord(currentIndex);
-});
+/* ---------- Init (no-op until load) ---------- */
+function init(){ updateViewButtons(); syncUI(); }
+init();
