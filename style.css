@@ -44,6 +44,21 @@ body {
   margin-bottom: 15px;
 }
 
+.header-card {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.header-card:hover {
+  background-color: #f0f0f0;
+}
+
 /* -------- Inputs & Buttons -------- */
 input[type="file"],
 input[type="number"],

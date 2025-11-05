@@ -246,21 +246,54 @@ function openHeaderModal(){
   headerModal.setAttribute('aria-hidden','false');
 }
 
-function renderHeaderOptions(){
+function renderHeaderOptions() {
   headerOptions.innerHTML = '';
-  if (!headers || !headers.length) { headerOptions.textContent = 'No headers found.'; return; }
+  if (!headers || !headers.length) { 
+    headerOptions.textContent = 'No headers found.'; 
+    return; 
+  }
+
   headers.forEach((h) => {
+    // Create container div for card
     const div = document.createElement('div');
-    const cb = document.createElement('input'); cb.type='checkbox'; cb.value = h; cb.checked = visibleHeaders.includes(h);
-    cb.addEventListener('change', (e) => {
-      if (e.target.checked) { if (!visibleHeaders.includes(h)) visibleHeaders.push(h); }
-      else { visibleHeaders = visibleHeaders.filter(x=>x!==h); }
-      saveVisibleHeaders(); showCurrentView();
+    div.className = 'header-card'; // add a class for styling
+
+    // Create checkbox
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = h;
+    cb.checked = visibleHeaders.includes(h);
+    cb.style.marginRight = '8px'; // spacing
+
+    // Create label
+    const label = document.createElement('span');
+    label.textContent = h;
+
+    // Append checkbox + label to card
+    div.appendChild(cb);
+    div.appendChild(label);
+
+    // Click on card toggles checkbox
+    div.addEventListener('click', (e) => {
+      // Prevent double toggle if user clicks the checkbox directly
+      if (e.target.tagName !== 'INPUT') {
+        cb.checked = !cb.checked;
+      }
+
+      // Update visibleHeaders
+      if (cb.checked) {
+        if (!visibleHeaders.includes(h)) visibleHeaders.push(h);
+      } else {
+        visibleHeaders = visibleHeaders.filter(x => x !== h);
+      }
+      saveVisibleHeaders();
+      showCurrentView();
     });
-    const label = document.createElement('label'); label.style.marginLeft='6px'; label.textContent = h;
-    div.appendChild(cb); div.appendChild(label); headerOptions.appendChild(div);
+
+    headerOptions.appendChild(div);
   });
 }
+
 
 /* ---------- Rendering Form View ---------- */
 function showRecord(index){
