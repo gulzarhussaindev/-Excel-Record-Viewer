@@ -295,65 +295,29 @@ function renderHeaderOptions() {
 }
 
 
-/* ---------- Rendering Form View ---------- */
-function showRecord(index){
-  if (!sheetData || sheetData.length === 0) { showEmptyMessage('0 records.'); return; }
-  if (index < 0) index = 0;
-  if (index >= sheetData.length) index = sheetData.length - 1;
-  currentIndex = index;
-
-  viewMode = 'form'; localStorage.setItem('viewMode', viewMode);
-  updateViewButtons();
-
-  // recordViewer.style.display = 'block';
-  tableViewContainer.style.display = 'none';
-  recordViewer.className = 'card form-view';
-  recordViewer.innerHTML = '';
-
-  const headerDiv = document.createElement('div');
-  headerDiv.style.gridColumn = '1 / -1';
-  headerDiv.style.marginBottom = '6px';
-  headerDiv.style.fontWeight = '600';
-  headerDiv.textContent = `Record ${currentIndex + 1} of ${sheetData.length}`;
-  recordViewer.appendChild(headerDiv);
-
-  const record = sheetData[currentIndex];
-  const fieldsToRender = (visibleHeaders && visibleHeaders.length) ? visibleHeaders : headers;
-
-  fieldsToRender.forEach(h => {
-    const i = headers.indexOf(h);
-    if (i === -1) return;
-    const value = record[i] != null ? String(record[i]) : '';
-    const fieldDiv = document.createElement('div'); fieldDiv.className = 'field';
-    const labelSpan = document.createElement('span'); labelSpan.className = 'label'; labelSpan.textContent = h + ':';
-    const fieldValue = document.createElement('span'); fieldValue.className = 'field-value';
-    const fullText = document.createElement('span'); fullText.className='full-text'; fullText.style.display='none'; fullText.textContent = value;
-    const maxLength = 80;
-    if (value.length > maxLength) { fieldValue.textContent = value.slice(0,maxLength) + '...'; const exp = document.createElement('button'); exp.className='expand-btn'; exp.type='button'; exp.textContent='Expand'; fieldDiv.append(labelSpan, fieldValue, exp, fullText); }
-    else { fieldValue.textContent = value; fieldDiv.append(labelSpan, fieldValue); }
-    recordViewer.appendChild(fieldDiv);
-  });
-
-  updateNavButtons();
-  updateMatchInfo();
-  syncUI();
-}
-
-/* ---------- Rendering Table View ---------- */
 function renderTableView(){
   tableViewContainer.innerHTML = '';
   tableViewContainer.style.display = 'block';
   recordViewer.style.display = 'none';
 
-  if (!sheetData || sheetData.length === 0) { const box = document.createElement('div'); box.className='no-record'; box.textContent='No records to show.'; tableViewContainer.appendChild(box); return; }
+  if (!sheetData || sheetData.length === 0) { 
+    const box = document.createElement('div'); 
+    box.className='no-record'; 
+    box.textContent='No records to show.'; 
+    tableViewContainer.appendChild(box); 
+    return; 
+  }
 
   const fieldsToRender = (visibleHeaders && visibleHeaders.length) ? visibleHeaders : headers;
-
-  const table = document.createElement('table'); table.className='table';
-  const thead = document.createElement('thead'); const trHead = document.createElement('tr');
+  const table = document.createElement('table'); 
+  table.className='table';
+  
+  const thead = document.createElement('thead'); 
+  const trHead = document.createElement('tr');
   fieldsToRender.forEach(h => {
-    const th = document.createElement('th'); th.textContent = h; th.style.userSelect='none';
-    // optional: sort on click
+    const th = document.createElement('th'); 
+    th.textContent = h; 
+    th.style.userSelect='none';
     th.addEventListener('click', () => sortByColumn(h));
     trHead.appendChild(th);
   });
@@ -362,29 +326,69 @@ function renderTableView(){
 
   const tbody = document.createElement('tbody');
 
-  // If matches exist (filter), show only matched rows, otherwise show all rows
+  // Determine rows to show (filtered matches or all)
   const rowsToShow = (matches && matches.length) ? matches.map(i=>sheetData[i]) : sheetData;
   const rowIndexes = (matches && matches.length) ? matches.slice() : sheetData.map((_,i)=>i);
 
   rowsToShow.forEach((row, idx) => {
     const tr = document.createElement('tr');
-    tr.dataset.rowIndex = rowIndexes[idx]; // store original index so clicking opens that record
+    tr.dataset.rowIndex = rowIndexes[idx];
+
     fieldsToRender.forEach(h => {
       const colIndex = headers.indexOf(h);
-      const td = document.createElement('td'); td.textContent = (colIndex > -1 && row[colIndex] != null) ? String(row[colIndex]) : '';
+      const td = document.createElement('td'); 
+
+      const value = (colIndex > -1 && row[colIndex] != null) ? String(row[colIndex]) : '';
+      const maxLength = 80; // same as form view
+
+      if (value.length > maxLength) {
+        const snippet = document.createElement('span');
+        snippet.textContent = value.slice(0, maxLength) + '...';
+        const fullText = document.createElement('span');
+        fullText.textContent = value;
+        fullText.style.display = 'none';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'expand-btn';
+        btn.textContent = 'Expand';
+
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation(); // prevent triggering row click
+          if (fullText.style.display === 'none') {
+            fullText.style.display = 'inline';
+            snippet.style.display = 'none';
+            btn.textContent = 'Collapse';
+          } else {
+            fullText.style.display = 'none';
+            snippet.style.display = 'inline';
+            btn.textContent = 'Expand';
+          }
+        });
+
+        td.appendChild(snippet);
+        td.appendChild(fullText);
+        td.appendChild(btn);
+      } else {
+        td.textContent = value;
+      }
+
       tr.appendChild(td);
     });
+
     tbody.appendChild(tr);
   });
 
   table.appendChild(tbody);
   tableViewContainer.appendChild(table);
 
-  // update match info visibility
-  if (matches && matches.length) { matchInfoDiv.style.display='block'; matchInfoDiv.textContent = `Found ${matches.length} matches. Showing ${matchIndex+1} of ${matches.length}.`; }
-  else { matchInfoDiv.style.display='none'; }
+  // Show match info if needed
+  if (matches && matches.length) { 
+    matchInfoDiv.style.display='block'; 
+    matchInfoDiv.textContent = `Found ${matches.length} matches. Showing ${matchIndex+1} of ${matches.length}.`; 
+  } else { 
+    matchInfoDiv.style.display='none'; 
+  }
 }
-
 /* ---------- Sorting used in table view ---------- */
 function sortByColumn(headerName){
   const colIndex = headers.indexOf(headerName);
