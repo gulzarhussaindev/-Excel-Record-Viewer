@@ -2,39 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Excel Record Viewer | Free Online XLSX & CSV File Viewer</title>
-  <!-- Meta Tags for SEO + WhatsApp/Facebook/Twitter -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="title" content="Excel Record Viewer">
-  <meta name="description" content="View Excel, XLSX, XLS, and CSV files instantly in your browser. Excel Record Viewer is a free, fast, and secure online spreadsheet viewer built by Gulzar Hussain.">
-  <meta name="keywords" content="Excel Viewer, Spreadsheet Viewer, XLSX, CSV, XLS, File Viewer, Gulzar Hussain, UOL">
-  <meta name="author" content="Gulzar Hussain">
 
-  <!-- Open Graph (WhatsApp, Facebook) -->
+  <title>Excel Reader & CSV Viewer | Free Online Spreadsheet Viewer</title>
+  <meta name="description" content="View Excel, XLSX, XLS, and CSV files instantly in your browser. Excel Reader and CSV Viewer lets you open, search, and filter spreadsheet data securely — free and fast.">
+  <meta name="keywords" content="Excel Reader, Excel Viewer, CSV Reader, CSV Viewer, Spreadsheet Viewer, XLSX, XLS, Open Excel Online, View CSV File, Free Excel App, University of Ladakh, Gulzar Hussain">
+  <meta name="author" content="Gulzar Hussain">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="theme-color" content="#0078d7">
+  <link rel="canonical" href="https://apps.uol.ac.in/">
+
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Excel Record Viewer">
-  <meta property="og:description" content="Upload and browse Excel records in a clean, user-friendly viewer developed by Gulzar Hussain.">
-  <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-192.png">
-  <meta property="og:url" content="https://apps.uol.ac.in">
+  <meta property="og:title" content="Excel Reader & CSV Viewer">
+  <meta property="og:description" content="Free online Excel and CSV viewer built by Gulzar Hussain — open and browse spreadsheet data instantly in your browser.">
+  <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png">
+  <meta property="og:url" content="https://apps.uol.ac.in/">
   <meta property="og:site_name" content="Excel Record Viewer">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Excel Record Viewer">
-  <meta name="twitter:description" content="Easily view and navigate Excel files — developed by Gulzar Hussain.">
-  <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-192.png">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="twitter:title" content="Excel Reader & CSV Viewer">
+  <meta name="twitter:description" content="Free online Excel and CSV viewer — upload and view spreadsheet files instantly in your browser.">
+  <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png">
 
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://apps.uol.ac.in/assets/icons/icon-192.png">
+  <!-- Favicon & Manifest -->
+  <link rel="icon" type="image/png" sizes="192x192" href="https://apps.uol.ac.in/assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="https://apps.uol.ac.in/assets/icons/icon-512.png">
+  <link rel="manifest" href="https://apps.uol.ac.in/manifest.json">
 
   <!-- Styles & Library -->
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <link rel="canonical" href="https://apps.uol.ac.in/">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -42,35 +43,32 @@
     gtag('js', new Date());
     gtag('config', 'G-SHDN3XWHYZ');
   </script>
+
+  <!-- Structured Data -->
   <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Excel Record Viewer",
-      "description": "A simple, secure, and elegant Excel Record Viewer created by Gulzar Hussain. Upload Excel files and browse records beautifully, one by one.",
-      "operatingSystem": "Web",
-      "applicationCategory": "UtilityApplication",
-      "url": "https://apps.uol.ac.in",
-      "author": {
-        "@type": "Person",
-        "name": "Gulzar Hussain",
-        "email": "mailto:gulzarhussain@uol.ac.in"
-      },
-      "image": "https://apps.uol.ac.in/assets/icons/icon-192.png",
-      "screenshot": "https://apps.uol.ac.in/assets/icons/icon-512.png",
-      "license": "https://opensource.org/licenses/MIT",
-      "featureList": [
-        "Upload and view Excel, XLSX, XLS, or CSV files",
-        "Navigate records one by one or in table view",
-        "Filter, search, and export visible data",
-        "Installable as a PWA for offline use"
-      ],
-      "keywords": "Excel viewer, spreadsheet viewer, XLSX, CSV, XLS, online Excel tool, data viewer, Gulzar Hussain"
-    }
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Excel Reader & CSV Viewer",
+    "operatingSystem": "Web",
+    "applicationCategory": "BusinessApplication",
+    "description": "Free online Excel, XLSX, and CSV file viewer to open, search, and filter spreadsheet data instantly in your browser.",
+    "url": "https://apps.uol.ac.in/",
+    "image": "https://apps.uol.ac.in/assets/icons/icon-512.png",
+    "author": {
+      "@type": "Person",
+      "name": "Gulzar Hussain",
+      "email": "mailto:gulzarhussain@uol.ac.in"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "keywords": "Excel Reader, Excel Viewer, CSV Viewer, Spreadsheet Viewer, Free Excel App, University of Ladakh"
+  }
   </script>
 </head>
-
-
 <body>
   <div class="container">
     <div class="header">
@@ -147,6 +145,17 @@
         </strong>, 
         Sr. Tech Assistant, <span>UOL</span>
       </div>
+
+      <div class="footer-seo">
+        <h4 class="seo-title">About this tool</h4>
+        <p class="seo-desc">
+          Excel Record Viewer is a free online <strong>Excel Reader</strong> and
+          <strong>CSV Viewer</strong> created by <strong>Gulzar Hussain</strong>.
+          It allows you to open, view, search, and filter spreadsheet files
+          (.xls, .xlsx, .csv) directly in your browser — no installation required.
+          The tool is lightweight, secure, and can be installed as a Progressive Web App.
+        </p>
+      </div>
     </footer>
   </div>
 
@@ -176,5 +185,6 @@
 
   <script src="script.js"></script>
 </body>
+
 
 </html>
