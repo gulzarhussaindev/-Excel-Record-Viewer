@@ -372,3 +372,43 @@ button:active {
     transform: scale(1);
   }
 }
+
+/* -------- SEO Footer Section (About Info) -------- */
+.footer-seo {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.footer-seo .seo-title {
+  font-size: 0.9rem; /* slightly smaller than 'Developed by' text */
+  color: #0078d7;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.footer-seo .seo-desc {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+  color: #555;
+  padding: 0 10px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 700px) {
+  .footer-seo {
+    font-size: 0.9rem;
+    padding-top: 8px;
+  }
+  .footer-seo .seo-title {
+    font-size: 0.88rem;
+  }
+  .footer-seo .seo-desc {
+    font-size: 0.9rem;
+  }
+}
