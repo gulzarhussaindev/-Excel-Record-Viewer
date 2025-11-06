@@ -150,53 +150,68 @@ function handleFile(e){
   reader.readAsArrayBuffer(file);
 }
 
-function loadSheet(name){
+function loadSheet(name) {
   const sheet = workbook.Sheets[name];
   const json = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, cellDates: true, dateNF: "dd-mm-yyyy" });
   
   if (!Array.isArray(json) || json.length === 0 || (Array.isArray(json[0]) && json[0].length === 0)) {
-    headers = []; sheetData = []; showEmptyMessage('No data in this sheet.'); disableUI(true); syncUI(); return;
+    headers = []; 
+    sheetData = [];
+    showEmptyMessage('No data in this sheet.'); 
+    disableUI(true); 
+    syncUI(); 
+    return;
   }
 
-  headers = json[0].map(h => h == null ? '' : String(h));
-  // sheetData = json.slice(1).map(r => Array.isArray(r) ? r : []);
+  // Use detectHeaderRow to find the best header row and headers
+  const { headerRowIndex, headers: detectedHeaders } = detectHeaderRow(json);
 
-sheetData = json.slice(1).map(row =>
-  (Array.isArray(row) ? row : []).map(cell => {
-    if (cell instanceof Date) {
-      // Format pure Date objects
-      const d = cell;
-      const dd = String(d.getDate()).padStart(2, "0");
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const yyyy = d.getFullYear();
-      return `${dd}-${mm}-${yyyy}`;
-    }
+  // If no valid header row was found, use the first row as headers
+  if (!detectedHeaders.length) {
+    headers = json[0].map(h => h == null ? '' : String(h));
+  } else {
+    headers = detectedHeaders;
+  }
 
-    // Handle numbers that are Excel date serials
-    if (typeof cell === "number" && cell > 20000 && cell < 60000) {
-      const excelEpoch = new Date(1899, 11, 30);
-      const parsed = new Date(excelEpoch.getTime() + Math.floor(cell) * 86400000);
-      const dd = String(parsed.getDate()).padStart(2, "0");
-      const mm = String(parsed.getMonth() + 1).padStart(2, "0");
-      const yyyy = parsed.getFullYear();
-      return `${dd}-${mm}-${yyyy}`;
-    }
+  // Sheet data starts from the row after the header row
+  sheetData = json.slice(headerRowIndex + 1).map(row =>
+    (Array.isArray(row) ? row : []).map(cell => {
+      if (cell instanceof Date) {
+        // Format pure Date objects
+        const d = cell;
+        const dd = String(d.getDate()).padStart(2, "0");
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const yyyy = d.getFullYear();
+        return `${dd}-${mm}-${yyyy}`;
+      }
 
-    // Replace slashes (1/7/19 → 01-07-2019) if string looks like a date
-    if (typeof cell === "string" && /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell.trim())) {
-      const [d, m, y] = cell.split("/");
-      const dd = String(d).padStart(2, "0");
-      const mm = String(m).padStart(2, "0");
-      const yyyy = y.length === 2 ? "20" + y : y;
-      return `${dd}-${mm}-${yyyy}`;
-    }
+      // Handle numbers that are Excel date serials
+      if (typeof cell === "number" && cell > 20000 && cell < 60000) {
+        const excelEpoch = new Date(1899, 11, 30);
+        const parsed = new Date(excelEpoch.getTime() + Math.floor(cell) * 86400000);
+        const dd = String(parsed.getDate()).padStart(2, "0");
+        const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+        const yyyy = parsed.getFullYear();
+        return `${dd}-${mm}-${yyyy}`;
+      }
 
-    // Otherwise, return as-is
-    return cell ?? "";
-  })
-);
+      // Replace slashes (1/7/19 → 01-07-2019) if string looks like a date
+      if (typeof cell === "string" && /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(cell.trim())) {
+        const [d, m, y] = cell.split("/");
+        const dd = String(d).padStart(2, "0");
+        const mm = String(m).padStart(2, "0");
+        const yyyy = y.length === 2 ? "20" + y : y;
+        return `${dd}-${mm}-${yyyy}`;
+      }
 
-  currentIndex = 0; matches = []; matchIndex = 0;
+      // Otherwise, return as-is
+      return cell ?? "";
+    })
+  );
+
+  currentIndex = 0; 
+  matches = []; 
+  matchIndex = 0;
 
   // visible headers preference
   const saved = loadVisibleHeaders();
@@ -208,6 +223,7 @@ sheetData = json.slice(1).map(row =>
     visibleHeaders = headers.slice();
   }
 
+  // Call the UI update functions
   populateFilterDropdown();
   renderHeaderOptions();
   updateViewButtons();
@@ -215,6 +231,49 @@ sheetData = json.slice(1).map(row =>
   syncUI();
 }
 
+// Detect header row based on the sheet's content
+function detectHeaderRow(sheetData, maxRowsToCheck = 10) {
+  const rowsToCheck = Math.min(sheetData.length, maxRowsToCheck);
+  let bestScore = -1;
+  let headerRowIndex = 0;
+
+  for (let r = 0; r < rowsToCheck; r++) {
+    const row = sheetData[r];
+    if (!row) continue;
+
+    let score = 0;
+    let nonEmptyCount = 0;
+
+    row.forEach((cell, ci) => {
+      if (cell != null && String(cell).trim() !== '') {
+        nonEmptyCount++;
+        if (isNaN(cell)) score += 1; // text is good for header
+        if (String(cell).length < 150) score += 0.5; // reasonable length
+      }
+    });
+
+    // Bonus if next row exists and has mostly numeric/data cells
+    const nextRow = sheetData[r + 1] || [];
+    let numericCount = 0;
+    nextRow.forEach(c => {
+      if (!isNaN(c) && c !== '') numericCount++;
+    });
+    if (numericCount >= row.length / 2) score += 1; // likely header
+
+    // Penalize empty/short rows
+    if (nonEmptyCount < row.length / 2) score -= 1;
+
+    if (score > bestScore) {
+      bestScore = score;
+      headerRowIndex = r;
+    }
+  }
+
+  // Extract headers from detected row
+  const headers = sheetData[headerRowIndex].map(c => (c != null ? String(c) : ''));
+
+  return { headerRowIndex, headers };
+}
 /* ---------- UI helpers ---------- */
 function disableUI(disabled){
   [prevBtn,nextBtn,goBtn,filterBtn,searchIndexInput,filterColumnSelect,filterValueInput].forEach(el => el.disabled = disabled);
