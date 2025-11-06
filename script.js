@@ -294,6 +294,51 @@ function renderHeaderOptions() {
   });
 }
 
+/* ---------- Rendering Form View ---------- */
+function showRecord(index){
+  if (!sheetData || sheetData.length === 0) { showEmptyMessage('0 records.'); return; }
+  if (index < 0) index = 0;
+  if (index >= sheetData.length) index = sheetData.length - 1;
+  currentIndex = index;
+
+  viewMode = 'form'; localStorage.setItem('viewMode', viewMode);
+  updateViewButtons();
+
+  // recordViewer.style.display = 'block';
+  tableViewContainer.style.display = 'none';
+  recordViewer.className = 'card form-view';
+  recordViewer.innerHTML = '';
+
+  const headerDiv = document.createElement('div');
+  headerDiv.style.gridColumn = '1 / -1';
+  headerDiv.style.marginBottom = '6px';
+  headerDiv.style.fontWeight = '600';
+  headerDiv.textContent = `Record ${currentIndex + 1} of ${sheetData.length}`;
+  recordViewer.appendChild(headerDiv);
+
+  const record = sheetData[currentIndex];
+  const fieldsToRender = (visibleHeaders && visibleHeaders.length) ? visibleHeaders : headers;
+
+  fieldsToRender.forEach(h => {
+    const i = headers.indexOf(h);
+    if (i === -1) return;
+    const value = record[i] != null ? String(record[i]) : '';
+    const fieldDiv = document.createElement('div'); fieldDiv.className = 'field';
+    const labelSpan = document.createElement('span'); labelSpan.className = 'label'; labelSpan.textContent = h + ':';
+    const fieldValue = document.createElement('span'); fieldValue.className = 'field-value';
+    const fullText = document.createElement('span'); fullText.className='full-text'; fullText.style.display='none'; fullText.textContent = value;
+    const maxLength = 80;
+    if (value.length > maxLength) { fieldValue.textContent = value.slice(0,maxLength) + '...'; const exp = document.createElement('button'); exp.className='expand-btn'; exp.type='button'; exp.textContent='Expand'; fieldDiv.append(labelSpan, fieldValue, exp, fullText); }
+    else { fieldValue.textContent = value; fieldDiv.append(labelSpan, fieldValue); }
+    recordViewer.appendChild(fieldDiv);
+  });
+
+  updateNavButtons();
+  updateMatchInfo();
+  syncUI();
+}
+
+/* ---------- Rendering Table View ---------- */
 
 function renderTableView(){
   tableViewContainer.innerHTML = '';
@@ -559,4 +604,5 @@ function exportVisibleXLSX(){
 
 /* ---------- Init (no-op until load) ---------- */
 function init(){ updateViewButtons(); syncUI(); }
+
 init();
