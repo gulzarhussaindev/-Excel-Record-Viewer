@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>Excel Viewer</ShortName>
+    <Description>Search Excel Viewer website</Description>
+    <Url type="text/html" template="https://apps.uol.ac.in/?q={searchTerms}"/>
+    <Contact>gulzarhussain@uol.ac.in</Contact>
+</OpenSearchDescription>

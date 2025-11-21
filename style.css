@@ -412,3 +412,19 @@ button:active {
     font-size: 0.9rem;
   }
 }
+.field-selector-group {
+  display: inline-block;
+  position: relative;
+}
+
+.fade-tip {
+  font-size: 13px;
+  margin-top: 4px;
+  color: #666;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}

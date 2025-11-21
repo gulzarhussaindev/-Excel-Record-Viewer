@@ -1,198 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Excel Reader & CSV Viewer | Free Online Spreadsheet Viewer</title>
-  <meta name="description" content="View Excel, XLSX, XLS, and CSV files instantly in your browser. Excel Reader and CSV Viewer lets you open, search, and filter spreadsheet data securely — free and fast.">
-  <meta name="keywords" content="Excel Reader, Excel Viewer, CSV Reader, CSV Viewer, Spreadsheet Viewer, XLSX, XLS, Open Excel Online, View CSV File, Free Excel App, University of Ladakh, Gulzar Hussain">
-  <meta name="author" content="Gulzar Hussain">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-  <meta name="theme-color" content="#0078d7">
-  <link rel="canonical" href="https://apps.uol.ac.in/">
+    <title>Excel Reader & CSV Viewer | Free Online Spreadsheet Viewer</title>
+    <meta name="description" content="View Excel, XLSX, XLS, and CSV files instantly in your browser. Excel Reader and CSV Viewer lets you open, search, and filter spreadsheet data securely — free and fast.">
+    <meta name="keywords" content="Excel Reader, Excel Viewer, CSV Reader, CSV Viewer, Spreadsheet Viewer, XLSX Viewer, XLS Viewer, Open Excel Online, View CSV Online, Free Excel Viewer, Excel Record Viewer, Secure Excel Viewer, Offline Excel Viewer, No Upload Excel Viewer, Excel Browser Viewer, Excel Tool Online, Free Spreadsheet Viewer">
+    <meta name="author" content="Gulzar Hussain">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="theme-color" content="#0078d7">
+    <link rel="canonical" href="https://apps.uol.ac.in/">
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Excel Reader & CSV Viewer">
-  <meta property="og:description" content="Free online Excel and CSV viewer built by Gulzar Hussain — open and browse spreadsheet data instantly in your browser.">
-  <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png">
-  <meta property="og:url" content="https://apps.uol.ac.in/">
-  <meta property="og:site_name" content="Excel Record Viewer">
-  <meta name="msapplication-TileImage" content="https://apps.uol.ac.in/assets/icons/favicon-192x192.png">
-  <meta name="msapplication-TileColor" content="#0078d7">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Excel Reader & CSV Viewer">
+    <meta property="og:description" content="Free online Excel and CSV viewer built by Gulzar Hussain — open and browse spreadsheet data instantly in your browser.">
+    <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png">
+    <meta property="og:url" content="https://apps.uol.ac.in/">
+    <meta property="og:site_name" content="Excel Record Viewer">
+    <meta name="msapplication-TileImage" content="https://apps.uol.ac.in/assets/icons/favicon-192x192.png">
+    <meta name="msapplication-TileColor" content="#0078d7">
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Excel Reader & CSV Viewer">
-  <meta name="twitter:description" content="Free online Excel and CSV viewer — upload and view spreadsheet files instantly in your browser.">
-  <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Excel Reader & CSV Viewer">
+    <meta name="twitter:description" content="Free online Excel and CSV viewer — upload and view spreadsheet files instantly in your browser.">
+    <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png">
 
-  <!-- Favicon & Manifest -->
-  <link rel="icon" type="image/png" sizes="16x16" href="https://apps.uol.ac.in/assets/icons/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://apps.uol.ac.in/assets/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="https://apps.uol.ac.in/assets/icons/favicon-48x48.png">
-  <link rel="icon" href="https://apps.uol.ac.in/assets/icons/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" href="https://apps.uol.ac.in/assets/icons/favicon-512x512.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="https://apps.uol.ac.in/assets/icons/icon-192.png">
-  <link rel="manifest" href="https://apps.uol.ac.in/manifest.json">
-  <meta name="application-name" content="Excel Record Viewer">
-  <meta name="apple-mobile-web-app-title" content="Excel Viewer">
+    <!-- Favicon & Manifest -->
+    <link rel="icon" type="image/png" sizes="16x16" href="https://apps.uol.ac.in/assets/icons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://apps.uol.ac.in/assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="https://apps.uol.ac.in/assets/icons/favicon-48x48.png">
+    <link rel="icon" href="https://apps.uol.ac.in/assets/icons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://apps.uol.ac.in/assets/icons/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://apps.uol.ac.in/assets/icons/icon-192.png">
+    <link rel="manifest" href="https://apps.uol.ac.in/manifest.json">
+    <link rel="search" type="application/opensearchdescription+xml" title="Excel Viewer" href="opensearch.xml">
+    <meta name="application-name" content="Excel Record Viewer">
+    <meta name="apple-mobile-web-app-title" content="Excel Viewer">
 
-  <!-- Styles & Library -->
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Styles & Library -->
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-SHDN3XWHYZ');
-  </script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SHDN3XWHYZ');
+    </script>
 
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Excel Reader & CSV Viewer",
-    "operatingSystem": "Web",
-    "applicationCategory": "BusinessApplication",
-    "description": "Free online Excel, XLSX, and CSV file viewer to open, search, and filter spreadsheet data instantly in your browser.",
-    "url": "https://apps.uol.ac.in/",
-    "image": "https://apps.uol.ac.in/assets/icons/icon-512.png",
-    "author": {
-      "@type": "Person",
-      "name": "Gulzar Hussain",
-      "email": "mailto:gulzarhussain@uol.ac.in"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "keywords": "Excel Reader, Excel Viewer, CSV Viewer, Spreadsheet Viewer, Free Excel App, University of Ladakh"
-  }
-  </script>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1 style="margin-top: 0px;">Excel Record Viewer</h1>
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Excel Reader & CSV Viewer",
+      "operatingSystem": "Web",
+      "applicationCategory": "BusinessApplication",
+      "description": "Free online Excel, XLSX, and CSV file viewer to open, search, and filter spreadsheet data instantly in your browser.",
+      "url": "https://apps.uol.ac.in/",
+      "image": "https://apps.uol.ac.in/assets/icons/icon-512.png",
+      "author": {
+        "@type": "Person",
+        "name": "Gulzar Hussain",
+        "email": "mailto:gulzarhussain@uol.ac.in"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "keywords": "Excel Reader, Excel Viewer, CSV Viewer, Spreadsheet Viewer, Free Excel App, University of Ladakh"
+    }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is my Excel or CSV file uploaded to any server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Excel Record Viewer processes your Excel and CSV files completely inside your browser. Your data never leaves your device and is never uploaded to any remote server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I view XLSX, XLS, and CSV files online?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The tool supports XLSX, XLS, and CSV formats using a secure, client-side reader."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this online viewer work offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. After installation as a PWA, the Excel Viewer works offline for supported features."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need to install software to use this Excel viewer?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The viewer is web-based and runs directly in your browser without installation."
+            }
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://apps.uol.ac.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "About",
+            "item": "https://apps.uol.ac.in/about.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Privacy Policy",
+            "item": "https://apps.uol.ac.in/privacy.html"
+          },
+                    {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Terms & conditions",
+            "item": "https://apps.uol.ac.in/terms.html"
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Excel Record Viewer",
+        "url": "https://apps.uol.ac.in/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://apps.uol.ac.in/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1 style="margin-top: 0px;">Excel Record Viewer</h1>
 
 
-      <!-- Modal (place at bottom before script tags) -->
-      <div id="headerModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-          <h3>Select Fields to Display</h3>
-          <div class="modal-actions">
-            <button id="selectAllBtn" type="button" style="margin-right: 4px;">Select All</button>
-            <button id="unselectAllBtn" type="button">Unselect All</button>
-            <button id="closeModalBtn" type="button"style="margin-left: 4px;">Close</button>
+        <!-- Modal (place at bottom before script tags) -->
+        <div id="headerModal" class="modal" aria-hidden="true">
+          <div class="modal-content">
+            <h3>Select Fields to Display</h3>
+            <div class="modal-actions">
+              <button id="selectAllBtn" type="button" style="margin-right: 4px;">Select All</button>
+              <button id="unselectAllBtn" type="button">Unselect All</button>
+              <button id="closeModalBtn" type="button"style="margin-left: 4px;">Close</button>
+            </div>
+            <div id="headerOptions"></div>
           </div>
-          <div id="headerOptions"></div>
         </div>
       </div>
-    </div>
-      <div class="header-actions">
-        <button id="selectFieldsBtn" class="install-top-btn" title="Select fields to show">Fields</button>
-        <button id="toggleTableBtn" class="install-top-btn" title="Switch to table view" style="display:none;">Show Table</button>
-        <button id="exportBtn" class="install-top-btn" title="Export visible data" style="display:none;">Export ▼</button>
-        <button id="installBtn" class="install-top-btn" style="display:none;">
-          📲 Install App
-        </button>
+        <div class="header-actions">
+          <div class="field-selector-group">
+            <button id="selectFieldsBtn" class="install-top-btn" title="Customize visible columns">
+              Columns ▼
+            </button>
+          </div>
+
+          <p id="columnTip" class="fade-tip" style="display:none;">
+            Choose which columns to display in the viewer or table.
+          </p>
+          <button id="toggleTableBtn" class="install-top-btn" title="Switch to table view" style="display:none;">Table View</button>
+          <button id="exportBtn" class="install-top-btn" title="Export visible data" style="display:none;">Export ▼</button>
+          <button id="installBtn" class="install-top-btn" style="display:none;">
+            📲 Install App
+          </button>
+        </div>
+
+
+      <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
+      <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
+        <label for="sheetSelector">Select sheet:</label>
+        <select id="sheetSelector"></select>
       </div>
 
+      <hr>
 
-    <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
-    <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
-      <label for="sheetSelector">Select sheet:</label>
-      <select id="sheetSelector"></select>
-    </div>
-
-    <hr>
-
-    <div class="search">
-      <input type="number" id="searchIndex" placeholder="Go to row #" disabled>
-      <button id="goBtn" disabled>Go</button>
-    </div>
-
-    <div class="filter">
-      <label for="filterColumn">Filter by:</label>
-      <select id="filterColumn" disabled></select>
-      <input type="text" id="filterValue" placeholder="Enter value to search" disabled>
-      <button id="filterBtn" disabled>Search</button>
-    </div>
-
-    <div id="filterInfo" class="filter-info" style="display:none;"></div>
-    <div id="matchInfo" style="display:none;"></div>
-
-    <!-- Record container: form view and table view (toggle) -->
-    <div id="recordViewer" class="card">
-      <div class="no-record">📄 No record loaded.</div>
-    </div>
-
-    <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;">
-      <!-- table inserted here -->
-    </div>
-
-    <div class="nav">
-      <button id="prevBtn" disabled>Previous</button>
-      <button id="nextBtn" disabled>Next</button>
-    </div>
-
-    <footer class="footer">
-      <div class="footer-content">
-        Developed by 
-        <strong>
-          <a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">
-            Gulzar Hussain
-          </a>
-        </strong>, 
-        Sr. Tech Assistant, <span>UOL</span>
+      <div class="search">
+        <input type="number" id="searchIndex" placeholder="Go to row #" disabled>
+        <button id="goBtn" disabled>Go</button>
       </div>
 
-      <div class="footer-seo">
-        <h4 class="seo-title">About this tool</h4>
-        <p class="seo-desc">
-          Excel Record Viewer is a free online <strong>Excel Reader</strong> and
-          <strong>CSV Viewer</strong> created by <strong>Gulzar Hussain</strong>.
-          It allows you to open, view, search, and filter spreadsheet files
-          (.xls, .xlsx, .csv) directly in your browser — no installation required.
-          The tool is lightweight, secure, and can be installed as a Progressive Web App.
-        </p>
+      <div class="filter">
+        <label for="filterColumn">Filter by:</label>
+        <select id="filterColumn" disabled></select>
+        <input type="text" id="filterValue" placeholder="Enter value to search" disabled>
+        <button id="filterBtn" disabled>Search</button>
       </div>
-    </footer>
-  </div>
 
-  <!-- <script>
-    // Handle install prompt
-    let deferredPrompt;
-    const installBtn = document.getElementById("installBtn");
+      <div id="filterInfo" class="filter-info" style="display:none;"></div>
+      <div id="matchInfo" style="display:none;"></div>
 
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "inline-block";
-    });
+      <!-- Record container: form view and table view (toggle) -->
+      <div id="recordViewer" class="card">
+        <div class="no-record">📄 No record loaded.</div>
+      </div>
 
-    installBtn.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        if (choice.outcome === "accepted") {
-          console.log("App installed");
-        }
-        installBtn.style.display = "none";
-        deferredPrompt = null;
-      }
-    });
-  </script> -->
+      <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;">
+        <!-- table inserted here -->
+      </div>
 
-  <script src="script.js"></script>
-</body>
+      <div class="nav">
+        <button id="prevBtn" disabled>Previous</button>
+        <button id="nextBtn" disabled>Next</button>
+      </div>
 
+      <footer class="footer">
+        <div class="footer-content">
+          Developed by 
+          <strong>
+            <a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">
+              Gulzar Hussain
+            </a>
+          </strong>, 
+          Sr. Tech Assistant, <span>UOL</span>
+        </div>
 
+        <div class="footer-seo">
+          <h4 class="seo-title">About this tool</h4>
+          <p class="seo-desc">
+            Excel Record Viewer is a free online <strong>Excel Reader</strong> and
+            <strong>CSV Viewer</strong> created by <strong>Gulzar Hussain</strong>.
+            It allows you to open, view, search, and filter spreadsheet files
+            (.xls, .xlsx, .csv) directly in your browser — no installation required.
+            The tool is lightweight, secure, and can be installed as a Progressive Web App.
+          </p>
+        </div>
+          <hr>
+          <p>
+              &copy; 2025 Secure Excel Viewer | 
+              <a href="about.html" class="footer-link">About Us</a> | 
+              <a href="privacy.html" class="footer-link">Privacy Policy</a>|
+              <a href="terms.html" class="footer-link">Terms</a>
+          </p>
+          <p>Your data is processed locally in your browser and is never uploaded to our servers.</p>
+
+      </footer>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>

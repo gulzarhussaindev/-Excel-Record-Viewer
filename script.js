@@ -590,7 +590,7 @@ function showCurrentView(){
 
 function updateViewButtons(){
   if (viewMode === 'table') {
-    toggleTableBtn.textContent = 'Show Form';
+    toggleTableBtn.textContent = 'Form View';
     tableViewContainer.style.display = 'block';
     recordViewer.style.display = 'none';
 
@@ -598,7 +598,7 @@ function updateViewButtons(){
     prevBtn.disabled = true;
     nextBtn.disabled = true;
   } else {
-    toggleTableBtn.textContent = 'Show Table';
+    toggleTableBtn.textContent = 'Table View';
     tableViewContainer.style.display = 'none';
     recordViewer.style.removeProperty('display');
     //recordViewer.style.display = 'block';

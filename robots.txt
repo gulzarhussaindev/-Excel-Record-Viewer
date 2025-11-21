@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://apps.uol.ac.in/sitemap.xml
