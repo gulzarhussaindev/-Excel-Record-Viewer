@@ -1,106 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ==================== SEO UPDATED ==================== -->
-  <title>Excel Reader & CSV Viewer — View, Edit & Export XLSX/CSV (No Upload)</title>
-
-  <meta name="description"
-        content="Open, edit, add and export Excel (.xlsx/.xls) and CSV files entirely in your browser. Excel Record Viewer is client-side, privacy-first and works offline. Your files never leave your device." />
-
-  <meta name="keywords"
-        content="Excel Viewer, Excel Editor, CSV Viewer, CSV Editor, XLSX Viewer, XLSX Editor, Add Records, Edit Records, Inline Table Editing, Excel Export, Offline Excel Viewer, No Upload Excel Viewer, Client-side Excel" />
-
-  <meta name="author" content="Gulzar Hussain" />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <meta name="theme-color" content="#0078d7" />
-  <link rel="canonical" href="https://apps.uol.ac.in/" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Excel Reader & CSV Viewer — View, Edit & Export XLSX/CSV" />
-  <meta property="og:description"
-        content="Open, edit, add and export Excel and CSV files directly in your browser. Client-side processing — no uploads. Inline table editing, form view, and XLSX/CSV export." />
-  <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png" />
-  <meta property="og:url" content="https://apps.uol.ac.in/" />
-  <meta property="og:site_name" content="Excel Record Viewer" />
-  <meta name="msapplication-TileImage" content="https://apps.uol.ac.in/assets/icons/favicon-192x192.png" />
-  <meta name="msapplication-TileColor" content="#0078d7" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Excel Reader & CSV Viewer — View, Edit & Export" />
-  <meta name="twitter:description"
-        content="Client-side Excel/CSV viewer & editor — open, edit, add records, filter and export without uploading." />
-  <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png" />
-
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="16x16" href="https://apps.uol.ac.in/assets/icons/favicon-16x16.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="https://apps.uol.ac.in/assets/icons/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="48x48" href="https://apps.uol.ac.in/assets/icons/favicon-48x48.png" />
-  <link rel="icon" href="https://apps.uol.ac.in/assets/icons/favicon.ico" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="https://apps.uol.ac.in/assets/icons/favicon-512x512.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="https://apps.uol.ac.in/assets/icons/icon-192.png" />
-
-  <link rel="manifest" href="https://apps.uol.ac.in/manifest.json" />
-  <link rel="search" type="application/opensearchdescription+xml" title="Excel Viewer" href="opensearch.xml" />
-  <meta name="application-name" content="Excel Record Viewer" />
-  <meta name="apple-mobile-web-app-title" content="Excel Viewer" />
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Accessibility fix: visually hidden class -->
-  <style>
-    .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    border: 0;
-    }
-    /* subtle contrast fix */
-    .header p,
-    .footer p,
-    .footer .footer-link {
-    color: #333 !important; /* FIX */
-    }
-  </style>
-
-  <!-- XLSX Library -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag("js", new Date());
-    gtag("config", "G-SHDN3XWHYZ");
-  </script>
-
-  <!-- ==================== UPDATED STRUCTURED DATA ==================== -->
-
-  <!-- Software Application Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Excel Record Viewer",
-    "alternateName": "Excel Viewer & Editor",
-    "description": "Open, edit, add and export Excel (.xlsx/.xls) and CSV files fully in your browser. Features inline table editing, form-based add-record mode, column selector and export to XLSX/CSV. 100% client-side — no uploads.",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Web",
-    "url": "https://apps.uol.ac.in/",
-    "image": "https://apps.uol.ac.in/assets/icons/icon-512.png",
-    "author": { "@type": "Person", "name": "Gulzar Hussain", "email": "mailto:gulzarhussain@uol.ac.in" },
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "featureList": [
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Preconnect for CDN (performance fix) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <!-- ==================== SEO UPDATED ==================== -->
+    <title>Excel Reader & CSV Viewer — View, Edit & Export XLSX/CSV (No Upload)</title>
+    <meta name="description"
+      content="Open, edit, add and export Excel (.xlsx/.xls) and CSV files entirely in your browser. Excel Record Viewer is client-side, privacy-first and works offline. Your files never leave your device." />
+    <meta name="keywords"
+      content="Excel Viewer, Excel Editor, CSV Viewer, CSV Editor, XLSX Viewer, XLSX Editor, Add Records, Edit Records, Inline Table Editing, Excel Export, Offline Excel Viewer, No Upload Excel Viewer, Client-side Excel" />
+    <meta name="author" content="Gulzar Hussain" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="theme-color" content="#0078d7" />
+    <link rel="canonical" href="https://apps.uol.ac.in/" />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Excel Reader & CSV Viewer — View, Edit & Export XLSX/CSV" />
+    <meta property="og:description"
+      content="Open, edit, add and export Excel and CSV files directly in your browser. Client-side processing — no uploads. Inline table editing, form view, and XLSX/CSV export." />
+    <meta property="og:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png" />
+    <meta property="og:url" content="https://apps.uol.ac.in/" />
+    <meta property="og:site_name" content="Excel Record Viewer" />
+    <meta name="msapplication-TileImage" content="https://apps.uol.ac.in/assets/icons/favicon-192x192.png" />
+    <meta name="msapplication-TileColor" content="#0078d7" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Excel Reader & CSV Viewer — View, Edit & Export" />
+    <meta name="twitter:description"
+      content="Client-side Excel/CSV viewer & editor — open, edit, add records, filter and export without uploading." />
+    <meta name="twitter:image" content="https://apps.uol.ac.in/assets/icons/icon-512.png" />
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="https://apps.uol.ac.in/assets/icons/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://apps.uol.ac.in/assets/icons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="https://apps.uol.ac.in/assets/icons/favicon-48x48.png" />
+    <link rel="icon" href="https://apps.uol.ac.in/assets/icons/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="https://apps.uol.ac.in/assets/icons/favicon-512x512.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="https://apps.uol.ac.in/assets/icons/icon-192.png" />
+    <link rel="manifest" href="https://apps.uol.ac.in/manifest.json" />
+    <link rel="search" type="application/opensearchdescription+xml" title="Excel Viewer" href="opensearch.xml" />
+    <meta name="application-name" content="Excel Record Viewer" />
+    <meta name="apple-mobile-web-app-title" content="Excel Viewer" />
+    <!-- === PERFORMANCE FIX: Preload CSS first === -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="stylesheet" href="style.css" />
+    <!-- Accessibility fix: visually hidden class -->
+    <style>
+      .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      border: 0;
+      }
+      /* subtle contrast fix */
+      .footer p,
+      .footer .footer-link {
+      color: #333 !important;
+      }
+      /* Fix low contrast for header title */
+      .header h1 {
+      color: #1a1a1a !important;
+      }
+      /* Fix header tagline */
+      .header p {
+      color: #2a2a2a !important;
+      }
+      /* Fix buttons (white text on colored button) */
+      .install-top-btn {
+      color: #fff !important;
+      text-shadow: 0 0 1px rgba(0,0,0,0.4);
+      }
+      /* Fix 'Columns ▼' and other small action buttons */
+      .header-actions button {
+      color: #fff !important;
+      text-shadow: 0 0 1px rgba(0,0,0,0.3);
+      }
+      /* Fix SEO section headings */
+      .seo-title {
+      color: #1b1b1b !important;
+      }
+      /* Fix SEO section description */
+      .seo-desc {
+      color: #2b2b2b !important;
+      }
+      /* Footer text */
+      .footer p {
+      color: #2a2a2a !important;
+      }
+      /* Footer links */
+      .footer .footer-link {
+      color: #0044aa !important; /* slightly darker but still blue */
+      }
+    </style>
+    <!-- === PERFORMANCE FIX: Defer XLSX === -->
+    <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-SHDN3XWHYZ");
+    </script>
+    <!-- ==================== UPDATED STRUCTURED DATA ==================== -->
+    <!-- Software Application Schema -->
+    <script type="application/ld+json">
+      {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Excel Record Viewer",
+      "alternateName": "Excel Viewer & Editor",
+      "description": "Open, edit, add and export Excel (.xlsx/.xls) and CSV files fully in your browser. Features inline table editing, form-based add-record mode, column selector and export to XLSX/CSV. 100% client-side — no uploads.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "url": "https://apps.uol.ac.in/",
+      "image": "https://apps.uol.ac.in/assets/icons/icon-512.png",
+      "author": { "@type": "Person", "name": "Gulzar Hussain", "email": "mailto:gulzarhussain@uol.ac.in" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": [
       "View Excel and CSV files",
       "Inline table editing with auto-save",
       "Add new records (form mode)",
@@ -108,218 +130,193 @@
       "Export updated file as XLSX or CSV",
       "No upload — client-side privacy",
       "Offline/PWA support"
-    ]
-  }
-  </script>
-
-  <!-- FAQ Schema -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"FAQPage",
-    "mainEntity":[
-      {
-        "@type":"Question",
-        "name":"Is my Excel or CSV file uploaded to any server?",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"No — Excel Record Viewer processes your Excel and CSV files entirely inside your browser. Your data never leaves your device."
-        }
-      },
-      {
-        "@type":"Question",
-        "name":"Can I edit my Excel or CSV file?",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"Yes — enable Edit mode to modify cells directly, or use Add New to create records. Export when finished."
-        }
-      },
-      {
-        "@type":"Question",
-        "name":"Does this tool modify my original uploaded file?",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"No. Edits remain in your browser session. Export creates a new updated file; your original file is untouched."
-        }
-      },
-      {
-        "@type":"Question",
-        "name":"Does it work offline?",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"Yes. After installing as a PWA, viewing, editing and exporting continue to work offline."
-        }
+      ]
       }
-    ]
-  }
-  </script>
-
-  <!-- Breadcrumb Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
+    </script>
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+      {
+      "@context":"https://schema.org",
+      "@type":"FAQPage",
+      "mainEntity":[
+      {
+      "@type":"Question",
+      "name":"Is my Excel or CSV file uploaded to any server?",
+      "acceptedAnswer":{
+      "@type":"Answer",
+      "text":"No — Excel Record Viewer processes your Excel and CSV files entirely inside your browser. Your data never leaves your device."
+      }
+      },
+      {
+      "@type":"Question",
+      "name":"Can I edit my Excel or CSV file?",
+      "acceptedAnswer":{
+      "@type":"Answer",
+      "text":"Yes — enable Edit mode to modify cells directly, or use Add New to create records. Export when finished."
+      }
+      },
+      {
+      "@type":"Question",
+      "name":"Does this tool modify my original uploaded file?",
+      "acceptedAnswer":{
+      "@type":"Answer",
+      "text":"No. Edits remain in your browser session. Export creates a new updated file; your original file is untouched."
+      }
+      },
+      {
+      "@type":"Question",
+      "name":"Does it work offline?",
+      "acceptedAnswer":{
+      "@type":"Answer",
+      "text":"Yes. After installing as a PWA, viewing, editing and exporting continue to work offline."
+      }
+      }
+      ]
+      }
+    </script>
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+      {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://apps.uol.ac.in/" },
       { "@type": "ListItem", "position": 2, "name": "About", "item": "https://apps.uol.ac.in/about.html" },
       { "@type": "ListItem", "position": 3, "name": "Privacy Policy", "item": "https://apps.uol.ac.in/privacy.html" },
       { "@type": "ListItem", "position": 4, "name": "Terms & Conditions", "item": "https://apps.uol.ac.in/terms.html" }
-    ]
-  }
-  </script>
-
-  <!-- Website Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Excel Record Viewer",
-    "url": "https://apps.uol.ac.in/",
-    "potentialAction": {
+      ]
+      }
+    </script>
+    <!-- Website Schema -->
+    <script type="application/ld+json">
+      {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Excel Record Viewer",
+      "url": "https://apps.uol.ac.in/",
+      "potentialAction": {
       "@type": "SearchAction",
       "target": "https://apps.uol.ac.in/?q={search_term_string}",
       "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-
-</head>
-
-<body>
-  <div class="container">
-    <main>
-      <!-- HEADER -->
-      <div class="header">
-        <h1 style="margin-top:0;">Excel Record Viewer</h1>
-        <p style="margin:6px 0 0;">Open • Edit • Add • Export — All in your browser. No uploads, works offline.</p>
-
-        <!-- ==================== EDIT WARNING MODAL (KEPT EXACT) ==================== -->
-        <div id="editWarningModal" class="modal" aria-hidden="true">
-          <div class="modal-content">
-            <h3 style="color:#d97706">⚠️ Important — Changes are Local</h3>
-            <p style="line-height:1.5;">
-              Changes you make will <strong>not</strong> be saved to your original uploaded file.
-              After finishing edits or new records, use <strong>Export</strong> to download the updated file.
-            </p>
-            <div class="modal-actions" style="justify-content:center; margin-top:12px;">
-              <button id="editWarningOkBtn" type="button" class="install-top-btn">OK</button>
+      }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <main>
+        <!-- HEADER -->
+        <div class="header">
+          <h1 style="margin-top:0;">Excel Record Viewer</h1>
+          <p style="margin:6px 0 0;">Open • Edit • Add • Export — All in your browser. No uploads, works offline.</p>
+          <!-- ==================== EDIT WARNING MODAL (KEPT EXACT) ==================== -->
+          <div id="editWarningModal" class="modal" aria-hidden="true">
+            <div class="modal-content">
+              <h3 style="color:#d97706">⚠️ Important — Changes are Local</h3>
+              <p style="line-height:1.5;">
+                Changes you make will <strong>not</strong> be saved to your original uploaded file.
+                After finishing edits or new records, use <strong>Export</strong> to download the updated file.
+              </p>
+              <div class="modal-actions" style="justify-content:center; margin-top:12px;">
+                <button id="editWarningOkBtn" type="button" class="install-top-btn">OK</button>
+              </div>
+            </div>
+          </div>
+          <!-- Header Modal — do NOT remove -->
+          <div id="headerModal" class="modal" aria-hidden="true">
+            <div class="modal-content">
+              <h3>Select Fields to Display</h3>
+              <div class="modal-actions">
+                <button id="selectAllBtn" type="button" style="margin-right:4px;">Select All</button>
+                <button id="unselectAllBtn" type="button">Unselect All</button>
+                <button id="closeModalBtn" type="button" style="margin-left:4px;">Close</button>
+              </div>
+              <div id="headerOptions"></div>
             </div>
           </div>
         </div>
-
-        <!-- Header Modal — do NOT remove -->
-        <div id="headerModal" class="modal" aria-hidden="true">
-          <div class="modal-content">
-            <h3>Select Fields to Display</h3>
-            <div class="modal-actions">
-              <button id="selectAllBtn" type="button" style="margin-right:4px;">Select All</button>
-              <button id="unselectAllBtn" type="button">Unselect All</button>
-              <button id="closeModalBtn" type="button" style="margin-left:4px;">Close</button>
-            </div>
-            <div id="headerOptions"></div>
+        <!-- ACTION BUTTONS (unchanged, fully JS-compatible) -->
+        <div class="header-actions">
+          <div class="field-selector-group">
+            <button id="selectFieldsBtn" class="install-top-btn">Columns ▼</button>
           </div>
+          <p id="columnTip" class="fade-tip" style="display:none;">Choose which columns to display.</p>
+          <button id="toggleTableBtn" class="install-top-btn" style="display:none;" title="Switch to table view">Table View</button>
+          <button id="exportBtn" class="install-top-btn" style="display:none;" title="Export visible data">📤 Export</button>
+          <button id="installBtn" class="install-top-btn" style="display:none;">📲 Install App</button>
         </div>
-      </div>
-
-      <!-- ACTION BUTTONS (unchanged, fully JS-compatible) -->
-      <div class="header-actions">
-        <div class="field-selector-group">
-          <button id="selectFieldsBtn" class="install-top-btn">Columns ▼</button>
+        <!-- FILE INPUT -->
+        <label for="fileInput" class="visually-hidden">Upload Excel or CSV file</label>
+        <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
+        <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
+          <label for="sheetSelector">Select sheet:</label>
+          <select id="sheetSelector"></select>
         </div>
-
-        <p id="columnTip" class="fade-tip" style="display:none;">Choose which columns to display.</p>
-        <button id="toggleTableBtn" class="install-top-btn" style="display:none;" title="Switch to table view">Table View</button>
-        <button id="exportBtn" class="install-top-btn" style="display:none;" title="Export visible data">📤 Export</button>
-        <button id="installBtn" class="install-top-btn" style="display:none;">📲 Install App</button>
-      </div>
-
-      <!-- FILE INPUT -->
-       <label for="fileInput" class="visually-hidden">Upload Excel or CSV file</label>
-      <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
-
-      <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
-        <label for="sheetSelector">Select sheet:</label>
-        <select id="sheetSelector"></select>
-      </div>
-
-      <hr />
-
-      <!-- SEARCH -->
-      <div class="search">
-        <input type="number" id="searchIndex" placeholder="Go to row #" disabled />
-        <button id="goBtn" disabled>Go</button>
-      </div>
-
-      <!-- FILTER -->
-      <div class="filter">
-        <label for="filterColumn">Search By Column:</label>
-        <select id="filterColumn" disabled></select>
-        <input type="text" id="filterValue" placeholder="Enter value to search" disabled />
-        <button id="filterBtn" disabled>Search</button>
-      </div>
-
-      <div id="filterInfo" class="filter-info" style="display:none;"></div>
-      <div id="matchInfo" style="display:none;"></div>
-
-      <!-- TABLE EDIT INFO (unchanged) -->
-      <div id="tableEditInfo"
+        <hr />
+        <!-- SEARCH -->
+        <div class="search">
+          <input type="number" id="searchIndex" placeholder="Go to row #" disabled />
+          <button id="goBtn" disabled>Go</button>
+        </div>
+        <!-- FILTER -->
+        <div class="filter">
+          <label for="filterColumn">Search By Column:</label>
+          <select id="filterColumn" disabled></select>
+          <input type="text" id="filterValue" placeholder="Enter value to search" disabled />
+          <button id="filterBtn" disabled>Search</button>
+        </div>
+        <div id="filterInfo" class="filter-info" style="display:none;"></div>
+        <div id="matchInfo" style="display:none;"></div>
+        <!-- TABLE EDIT INFO (unchanged) -->
+        <div id="tableEditInfo"
           style="display:none; padding:8px 12px; background:#fff7d6; border:1px solid #e0c66f;
-                  border-radius:6px; margin:12px 0; font-size:0.9rem; color:#7a5e00; font-weight:500;">
-        🔧 Editing Mode Enabled — Click any cell to edit. Changes auto-save.
-      </div>
-
-      <!-- FORM & TABLE VIEW -->
-      <div id="recordViewer" class="card">
-        <div class="no-record">📄 No record loaded.</div>
-      </div>
-
-      <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;"></div>
-
-      <div class="nav">
-        <button id="prevBtn" disabled>Previous</button>
-        <button id="nextBtn" disabled>Next</button>
-      </div>
-
-      <!-- ==================== STICKY BAR (unchanged) ==================== -->
-      <div id="stickyBar" class="sticky-bar" style="display:none;">
-        <div id="stickyLabel" class="sticky-label">Editing record</div>
-        <div class="sticky-actions">
-          <button id="stickySaveBtn" class="install-top-btn">Save</button>
-          <button id="stickyCancelBtn" class="install-top-btn">Cancel</button>
+          border-radius:6px; margin:12px 0; font-size:0.9rem; color:#7a5e00; font-weight:500;">
+          🔧 Editing Mode Enabled — Click any cell to edit. Changes auto-save.
         </div>
-      </div>
-    </main>
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-content">
-        Developed by <strong><a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">Gulzar Hussain</a></strong>,
-        Sr. Tech Assistant, UOL
-      </div>
-
-      <div class="footer-seo" style="margin-top:12px;">
-        <h2 class="seo-title">About this tool</h2>
-        <p class="seo-desc">
-          <strong>Features:</strong> 
-          View Excel/XLSX/CSV • Toggle Form/Table view • Select visible columns • Inline table editing • 
-          Add new records (form) • Export updated file • 100% client-side (no upload) • 
-          Installable on mobile & desktop.
+        <!-- FORM & TABLE VIEW -->
+        <div id="recordViewer" class="card">
+          <div class="no-record">📄 No record loaded.</div>
+        </div>
+        <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;"></div>
+        <div class="nav">
+          <button id="prevBtn" disabled>Previous</button>
+          <button id="nextBtn" disabled>Next</button>
+        </div>
+        <!-- ==================== STICKY BAR (unchanged) ==================== -->
+        <div id="stickyBar" class="sticky-bar" style="display:none;">
+          <div id="stickyLabel" class="sticky-label">Editing record</div>
+          <div class="sticky-actions">
+            <button id="stickySaveBtn" class="install-top-btn">Save</button>
+            <button id="stickyCancelBtn" class="install-top-btn">Cancel</button>
+          </div>
+        </div>
+      </main>
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="footer-content">
+          Developed by <strong><a href="mailto:gulzarhussain@uol.ac.in" class="footer-link">Gulzar Hussain</a></strong>,
+          Sr. Tech Assistant, UOL
+        </div>
+        <div class="footer-seo" style="margin-top:12px;">
+          <h2 class="seo-title">About this tool</h2>
+          <p class="seo-desc">
+            <strong>Features:</strong>
+            View Excel/XLSX/CSV • Toggle Form/Table view • Select visible columns • Inline table editing •
+            Add new records (form) • Export updated file • 100% client-side (no upload) •
+            Installable on mobile & desktop.
+          </p>
+        </div>
+        <hr />
+        <p>
+          &copy; 2025 Secure Excel Viewer |
+          <a href="about.html" class="footer-link">About Us</a> |
+          <a href="privacy.html" class="footer-link">Privacy Policy</a> |
+          <a href="terms.html" class="footer-link">Terms</a>
         </p>
-      </div>
-      <hr />
-
-      <p>
-        &copy; 2025 Secure Excel Viewer |
-        <a href="about.html" class="footer-link">About Us</a> |
-        <a href="privacy.html" class="footer-link">Privacy Policy</a> |
-        <a href="terms.html" class="footer-link">Terms</a>
-      </p>
-      <p>Your data is processed locally in your browser and is never uploaded to our servers.</p>
-    </footer>
-
-  </div>
-
-  <!-- JS -->
-  <script src="dist/a92x0Kf3.min.js"></script>
-</body>
+        <p>Your data is processed locally in your browser and is never uploaded to our servers.</p>
+      </footer>
+    </div>
+    <!-- === PERFORMANCE FIX: Defer your JS === -->
+    <script defer src="dist/a92x0Kf3.min.js"></script>
+  </body>
 </html>
-
