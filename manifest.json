@@ -1,24 +1,88 @@
 {
-  "id": "/index.html",
+  "id": "/",
   "name": "Excel Record Viewer",
   "short_name": "Excel Viewer",
-  "description": "Upload and browse Excel records in a clean, user-friendly viewer developed by Gulzar Hussain.",
+  "lang": "en",
+  "description": "View, edit, add and export Excel (XLSX/XLS) and CSV files entirely in your browser. 100% client-side, privacy-first, installable on mobile & desktop.",
+  
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f5f7fa",
   "theme_color": "#0078d7",
+
+  "categories": [
+    "productivity",
+    "business",
+    "utilities"
+  ],
+
   "icons": [
     {
       "src": "https://apps.uol.ac.in/assets/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "https://apps.uol.ac.in/assets/icons/icon-512.png",
+      "src": "https://apps.uol.ac.in/assets/icons/icon-512x.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://apps.uol.ac.in/assets/icons/icon-512x.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
-}
+  ],
 
+  "screenshots": [
+    {
+      "src": "https://apps.uol.ac.in/assets/screenshots/viewer.png",
+      "sizes": "1200x800",
+      "type": "image/png",
+      "label": "View and browse Excel/CSV records"
+    },
+    {
+      "src": "https://apps.uol.ac.in/assets/screenshots/editor.png",
+      "sizes": "1200x800",
+      "type": "image/png",
+      "label": "Inline table editing and form mode"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Open File",
+      "short_name": "Open",
+      "url": "/index.html#open",
+      "icons": [{
+        "src": "https://apps.uol.ac.in/assets/icons/icon-192.png",
+        "sizes": "192x192"
+      }]
+    },
+    {
+      "name": "New Record",
+      "short_name": "Add",
+      "url": "/index.html#add",
+      "icons": [{
+        "src": "https://apps.uol.ac.in/assets/icons/icon-192.png",
+        "sizes": "192x192"
+      }]
+    },
+    {
+      "name": "Table View",
+      "short_name": "Table",
+      "url": "/index.html#table",
+      "icons": [{
+        "src": "https://apps.uol.ac.in/assets/icons/icon-192.png",
+        "sizes": "192x192"
+      }]
+    }
+  ],
+
+  "prefer_related_applications": false
+}

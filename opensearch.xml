@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+
     <ShortName>Excel Viewer</ShortName>
-    <Description>Search Excel Viewer website</Description>
-    <Url type="text/html" template="https://apps.uol.ac.in/?q={searchTerms}"/>
+    <LongName>Excel Record Viewer — View, Edit & Export Excel/CSV</LongName>
+
+    <Description>
+        Search Excel Record Viewer — a client-side tool to view, edit, add and export Excel and CSV files.
+    </Description>
+
+    <Tags>excel viewer csv xlsx editor spreadsheet</Tags>
+
+    <Url type="text/html" template="https://apps.uol.ac.in/?q={searchTerms}" />
+
+    <Image height="16" width="16" type="image/png">
+        https://apps.uol.ac.in/assets/icons/favicon-16x16.png
+    </Image>
+
     <Contact>gulzarhussain@uol.ac.in</Contact>
+
+    <Developer>Gulzar Hussain</Developer>
+    <Attribution>Excel Record Viewer — Privacy-first, no-upload Excel tool.</Attribution>
+
+    <OutputEncoding>UTF-8</OutputEncoding>
+    <InputEncoding>UTF-8</InputEncoding>
+
 </OpenSearchDescription>
