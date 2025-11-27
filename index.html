@@ -52,6 +52,26 @@
   <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Accessibility fix: visually hidden class -->
+  <style>
+    .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+    }
+    /* subtle contrast fix */
+    .header p,
+    .footer p,
+    .footer .footer-link {
+    color: #333 !important; /* FIX */
+    }
+  </style>
+
   <!-- XLSX Library -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
@@ -167,107 +187,108 @@
 
 <body>
   <div class="container">
+    <main>
+      <!-- HEADER -->
+      <div class="header">
+        <h1 style="margin-top:0;">Excel Record Viewer</h1>
+        <p style="margin:6px 0 0;">Open • Edit • Add • Export — All in your browser. No uploads, works offline.</p>
 
-    <!-- HEADER -->
-    <div class="header">
-      <h1 style="margin-top:0;">Excel Record Viewer</h1>
-      <p style="margin:6px 0 0; color:#444;">Open • Edit • Add • Export — All in your browser. No uploads, works offline.</p>
+        <!-- ==================== EDIT WARNING MODAL (KEPT EXACT) ==================== -->
+        <div id="editWarningModal" class="modal" aria-hidden="true">
+          <div class="modal-content">
+            <h3 style="color:#d97706">⚠️ Important — Changes are Local</h3>
+            <p style="line-height:1.5;">
+              Changes you make will <strong>not</strong> be saved to your original uploaded file.
+              After finishing edits or new records, use <strong>Export</strong> to download the updated file.
+            </p>
+            <div class="modal-actions" style="justify-content:center; margin-top:12px;">
+              <button id="editWarningOkBtn" type="button" class="install-top-btn">OK</button>
+            </div>
+          </div>
+        </div>
 
-      <!-- ==================== EDIT WARNING MODAL (KEPT EXACT) ==================== -->
-      <div id="editWarningModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-          <h3 style="color:#d97706">⚠️ Important — Changes are Local</h3>
-          <p style="line-height:1.5; color:#333;">
-            Changes you make will <strong>not</strong> be saved to your original uploaded file.
-            After finishing edits or new records, use <strong>Export</strong> to download the updated file.
-          </p>
-          <div class="modal-actions" style="justify-content:center; margin-top:12px;">
-            <button id="editWarningOkBtn" type="button" class="install-top-btn">OK</button>
+        <!-- Header Modal — do NOT remove -->
+        <div id="headerModal" class="modal" aria-hidden="true">
+          <div class="modal-content">
+            <h3>Select Fields to Display</h3>
+            <div class="modal-actions">
+              <button id="selectAllBtn" type="button" style="margin-right:4px;">Select All</button>
+              <button id="unselectAllBtn" type="button">Unselect All</button>
+              <button id="closeModalBtn" type="button" style="margin-left:4px;">Close</button>
+            </div>
+            <div id="headerOptions"></div>
           </div>
         </div>
       </div>
 
-      <!-- Header Modal — do NOT remove -->
-      <div id="headerModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-          <h3>Select Fields to Display</h3>
-          <div class="modal-actions">
-            <button id="selectAllBtn" type="button" style="margin-right:4px;">Select All</button>
-            <button id="unselectAllBtn" type="button">Unselect All</button>
-            <button id="closeModalBtn" type="button" style="margin-left:4px;">Close</button>
-          </div>
-          <div id="headerOptions"></div>
+      <!-- ACTION BUTTONS (unchanged, fully JS-compatible) -->
+      <div class="header-actions">
+        <div class="field-selector-group">
+          <button id="selectFieldsBtn" class="install-top-btn">Columns ▼</button>
+        </div>
+
+        <p id="columnTip" class="fade-tip" style="display:none;">Choose which columns to display.</p>
+        <button id="toggleTableBtn" class="install-top-btn" style="display:none;" title="Switch to table view">Table View</button>
+        <button id="exportBtn" class="install-top-btn" style="display:none;" title="Export visible data">📤 Export</button>
+        <button id="installBtn" class="install-top-btn" style="display:none;">📲 Install App</button>
+      </div>
+
+      <!-- FILE INPUT -->
+       <label for="fileInput" class="visually-hidden">Upload Excel or CSV file</label>
+      <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
+
+      <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
+        <label for="sheetSelector">Select sheet:</label>
+        <select id="sheetSelector"></select>
+      </div>
+
+      <hr />
+
+      <!-- SEARCH -->
+      <div class="search">
+        <input type="number" id="searchIndex" placeholder="Go to row #" disabled />
+        <button id="goBtn" disabled>Go</button>
+      </div>
+
+      <!-- FILTER -->
+      <div class="filter">
+        <label for="filterColumn">Search By Column:</label>
+        <select id="filterColumn" disabled></select>
+        <input type="text" id="filterValue" placeholder="Enter value to search" disabled />
+        <button id="filterBtn" disabled>Search</button>
+      </div>
+
+      <div id="filterInfo" class="filter-info" style="display:none;"></div>
+      <div id="matchInfo" style="display:none;"></div>
+
+      <!-- TABLE EDIT INFO (unchanged) -->
+      <div id="tableEditInfo"
+          style="display:none; padding:8px 12px; background:#fff7d6; border:1px solid #e0c66f;
+                  border-radius:6px; margin:12px 0; font-size:0.9rem; color:#7a5e00; font-weight:500;">
+        🔧 Editing Mode Enabled — Click any cell to edit. Changes auto-save.
+      </div>
+
+      <!-- FORM & TABLE VIEW -->
+      <div id="recordViewer" class="card">
+        <div class="no-record">📄 No record loaded.</div>
+      </div>
+
+      <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;"></div>
+
+      <div class="nav">
+        <button id="prevBtn" disabled>Previous</button>
+        <button id="nextBtn" disabled>Next</button>
+      </div>
+
+      <!-- ==================== STICKY BAR (unchanged) ==================== -->
+      <div id="stickyBar" class="sticky-bar" style="display:none;">
+        <div id="stickyLabel" class="sticky-label">Editing record</div>
+        <div class="sticky-actions">
+          <button id="stickySaveBtn" class="install-top-btn">Save</button>
+          <button id="stickyCancelBtn" class="install-top-btn">Cancel</button>
         </div>
       </div>
-    </div>
-
-    <!-- ACTION BUTTONS (unchanged, fully JS-compatible) -->
-    <div class="header-actions">
-      <div class="field-selector-group">
-        <button id="selectFieldsBtn" class="install-top-btn">Columns ▼</button>
-      </div>
-
-      <p id="columnTip" class="fade-tip" style="display:none;">Choose which columns to display.</p>
-      <button id="toggleTableBtn" class="install-top-btn" style="display:none;" title="Switch to table view">Table View</button>
-      <button id="exportBtn" class="install-top-btn" style="display:none;" title="Export visible data">📤 Export</button>
-      <button id="installBtn" class="install-top-btn" style="display:none;">📲 Install App</button>
-    </div>
-
-    <!-- FILE INPUT -->
-    <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" />
-
-    <div id="sheetSelectorContainer" style="display:none; margin-top:10px;">
-      <label for="sheetSelector">Select sheet:</label>
-      <select id="sheetSelector"></select>
-    </div>
-
-    <hr />
-
-    <!-- SEARCH -->
-    <div class="search">
-      <input type="number" id="searchIndex" placeholder="Go to row #" disabled />
-      <button id="goBtn" disabled>Go</button>
-    </div>
-
-    <!-- FILTER -->
-    <div class="filter">
-      <label for="filterColumn">Search By Column:</label>
-      <select id="filterColumn" disabled></select>
-      <input type="text" id="filterValue" placeholder="Enter value to search" disabled />
-      <button id="filterBtn" disabled>Search</button>
-    </div>
-
-    <div id="filterInfo" class="filter-info" style="display:none;"></div>
-    <div id="matchInfo" style="display:none;"></div>
-
-    <!-- TABLE EDIT INFO (unchanged) -->
-    <div id="tableEditInfo"
-         style="display:none; padding:8px 12px; background:#fff7d6; border:1px solid #e0c66f;
-                border-radius:6px; margin:12px 0; font-size:0.9rem; color:#7a5e00; font-weight:500;">
-      🔧 Editing Mode Enabled — Click any cell to edit. Changes auto-save.
-    </div>
-
-    <!-- FORM & TABLE VIEW -->
-    <div id="recordViewer" class="card">
-      <div class="no-record">📄 No record loaded.</div>
-    </div>
-
-    <div id="tableViewContainer" class="card" style="display:none; padding:12px; overflow:auto;"></div>
-
-    <div class="nav">
-      <button id="prevBtn" disabled>Previous</button>
-      <button id="nextBtn" disabled>Next</button>
-    </div>
-
-    <!-- ==================== STICKY BAR (unchanged) ==================== -->
-    <div id="stickyBar" class="sticky-bar" style="display:none;">
-      <div id="stickyLabel" class="sticky-label">Editing record</div>
-      <div class="sticky-actions">
-        <button id="stickySaveBtn" class="install-top-btn">Save</button>
-        <button id="stickyCancelBtn" class="install-top-btn">Cancel</button>
-      </div>
-    </div>
-
+    </main>
     <!-- FOOTER -->
     <footer class="footer">
       <div class="footer-content">
@@ -276,7 +297,7 @@
       </div>
 
       <div class="footer-seo" style="margin-top:12px;">
-        <h4 class="seo-title">About this tool</h4>
+        <h2 class="seo-title">About this tool</h2>
         <p class="seo-desc">
           <strong>Features:</strong> 
           View Excel/XLSX/CSV • Toggle Form/Table view • Select visible columns • Inline table editing • 
@@ -301,5 +322,4 @@
   <script src="dist/a92x0Kf3.min.js"></script>
 </body>
 </html>
-
 
