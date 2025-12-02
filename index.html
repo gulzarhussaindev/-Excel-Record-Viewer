@@ -59,7 +59,7 @@
       }
     </style>
     <!-- === PERFORMANCE FIX: Defer XLSX === -->
-    <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script> -->
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHDN3XWHYZ"></script>
     <script>
@@ -196,8 +196,7 @@
             </div>
           </div>
         </div>
-
-                <!-- ==================== HERO UPLOAD SECTION ==================== -->
+        <!-- ==================== HERO UPLOAD SECTION ==================== -->
         <section class="hero-upload">
           <p class="hero-title-small">Open your file to get started</p>
           <p class="hero-privacy">Your file stays on your device. Nothing is uploaded.</p>
@@ -205,16 +204,12 @@
             <div class="hero-drop-inner">
               <div class="hero-icon">📄</div>
               <p class="hero-drop-text">Drag & drop your file here</p>
-
               <button id="heroOpenBtn" class="hero-open-btn">Open File</button>
-
               <p class="hero-supported">Supported: .xlsx, .xls, .csv</p>
             </div>
           </div>
         </section>
         <!-- ==================== END HERO ==================== -->
-
-
         <!-- ACTION BUTTONS (unchanged, fully JS-compatible) -->
         <div class="header-actions">
           <div class="field-selector-group">
@@ -297,15 +292,15 @@
         <p>Your data is processed locally in your browser and is never uploaded to our servers.</p>
       </footer>
     </div>
-  <script>
-(function () {
-    const fileInput = document.getElementById("fileInput");
-    const openBtn = document.getElementById("heroOpenBtn");
-    const drop = document.getElementById("heroDrop");
-    const openAnotherBtn = document.getElementById("openAnotherFileBtn");
-
-    // Elements to hide until file is loaded
-    const elementsToHide = [
+    <script>
+      (function () {
+      const fileInput = document.getElementById("fileInput");
+      const openBtn = document.getElementById("heroOpenBtn");
+      const drop = document.getElementById("heroDrop");
+      const openAnotherBtn = document.getElementById("openAnotherFileBtn");
+      
+      // Elements to hide until file is loaded
+      const elementsToHide = [
         document.querySelector(".header-actions"),
         document.querySelector(".search"),
         document.querySelector(".filter"),
@@ -314,44 +309,42 @@
         document.querySelector(".nav"),
         document.getElementById("stickyBar"),
         document.getElementById("filterHr")
-    ];
-
-    // Hide all UI until a file is loaded
-    function hideInitialUI() {
+      ];
+      
+      // Hide UI initially
+      function hideInitialUI() {
         elementsToHide.forEach(el => el?.classList.add("hidden-until-file"));
-        openAnotherBtn.style.display = "none";  // Hide change-file button initially
-    }
-    hideInitialUI();
-
-    // Show interface after file load
-    function showUIAfterLoad() {
+        openAnotherBtn.style.display = "none";
+      }
+      hideInitialUI();
+      
+      function showUIAfterLoad() {
         elementsToHide.forEach(el => el?.classList.remove("hidden-until-file"));
         openAnotherBtn.style.display = "inline-block";
-    }
-
-    // Open File button
-    openBtn.addEventListener("click", () => fileInput.click());
-
-    // Drag & Drop
-    drop.addEventListener("dragover", e => {
+      }
+      
+      // Open File button
+      openBtn.addEventListener("click", () => fileInput.click());
+      
+      // Drag & Drop
+      drop.addEventListener("dragover", e => {
         e.preventDefault();
         drop.classList.add("dragover");
-    });
-
-    drop.addEventListener("dragleave", () => drop.classList.remove("dragover"));
-
-    drop.addEventListener("drop", e => {
+      });
+      
+      drop.addEventListener("dragleave", () => drop.classList.remove("dragover"));
+      
+      drop.addEventListener("drop", e => {
         e.preventDefault();
         drop.classList.remove("dragover");
-
         if (!e.dataTransfer.files.length) return;
-
+      
         fileInput.files = e.dataTransfer.files;
         fileInput.dispatchEvent(new Event("change"));
-    });
-
-    // Fade out hero + show main UI
-    fileInput.addEventListener("change", () => {
+      });
+      
+      // Fade out hero and show UI
+      fileInput.addEventListener("change", () => {
         const hero = document.querySelector(".hero-upload");
         if (hero) {
             hero.classList.add("fade-out");
@@ -360,17 +353,57 @@
                 showUIAfterLoad();
             }, 450);
         }
-    });
-
-    // Open Another File button
-    openAnotherBtn.addEventListener("click", () => fileInput.click());
-
-})();
-</script>
-
-
-
+      });
+      
+      openAnotherBtn.addEventListener("click", () => fileInput.click());
+      })();
+    </script>
     <!-- === PERFORMANCE FIX: Defer your JS === -->
     <script defer src="dist/a92x0Kf3.min.js"></script>
+    <script>
+      (function() {
+          const fileInput = document.getElementById("fileInput");
+      
+          // Remove default handler — prevents X() from firing before XLSX is loaded
+          fileInput.onchange = null;
+      
+          // Safe XLSX loader (used by wrapper)
+          function loadXLSX(callback) {
+              if (window.XLSX) return callback();
+      
+              if (window._loadingXLSX) {
+                  const wait = setInterval(() => {
+                      if (window.XLSX) {
+                          clearInterval(wait);
+                          callback();
+                      }
+                  }, 30);
+                  return;
+              }
+      
+              window._loadingXLSX = true;
+              const s = document.createElement("script");
+              s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+              s.onload = () => {
+                  window._loadingXLSX = false;
+                  callback();
+              };
+              document.body.appendChild(s);
+          }
+      
+          // Master wrapper around file input change
+          fileInput.addEventListener("change", function(event) {
+              const file = event.target.files?.[0];
+              if (!file) return;
+      
+              loadXLSX(() => {
+                  // Call the original minified handler
+                  if (typeof X === "function") {
+                      X(event);
+                  }
+              });
+          });
+      })();
+    </script>
   </body>
 </html>
