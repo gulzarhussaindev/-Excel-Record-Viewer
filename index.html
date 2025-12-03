@@ -430,7 +430,40 @@
           });
       })();
     </script>
+    <script>
+      // Detect device type (mobile / desktop)
+      function getDeviceType() {
+          const ua = navigator.userAgent.toLowerCase();
+          if (/android|iphone|ipad|ipod/.test(ua)) return "mobile";
+          return "desktop";
+      }
+    
+      // Track PWA install event with device type
+      window.addEventListener("appinstalled", () => {
+          const deviceType = getDeviceType();
+    
+          gtag("event", "pwa_install", {
+              event_category: "PWA",
+              event_label: deviceType
+          });
+    
+          console.log("PWA installed on:", deviceType);
+      });
+    
+      // Track when the installed PWA is opened
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+          const deviceType = getDeviceType();
+    
+          gtag("event", "pwa_open", {
+              event_category: "PWA",
+              event_label: deviceType
+          });
+    
+          console.log("PWA opened:", deviceType);
+      }
+    </script>
   </body>
 </html>
+
 
 
