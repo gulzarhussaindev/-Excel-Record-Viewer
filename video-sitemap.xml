@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://apps.uol.ac.in/</loc>
+    <video:video>
+      <video:title>Excel Record Viewer - Demo</video:title>
+      <video:description>A fast and secure Excel/CSV viewer that works entirely in your browser.</video:description>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/5J5ck--j1RI/maxresdefault.jpg</video:thumbnail_loc>
+      <video:player_loc>https://www.youtube.com/embed/5J5ck--j1RI</video:player_loc>
+      <video:duration>60</video:duration>
+      <video:publication_date>2025-12-03</video:publication_date>
+    </video:video>
+  </url>
+</urlset>
