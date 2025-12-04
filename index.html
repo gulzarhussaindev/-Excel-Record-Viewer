@@ -162,31 +162,6 @@
       }
       }
     </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "VideoObject",
-        "name": "Excel Record Viewer - Demo (Offline Excel & CSV Viewer, No Upload)",
-        "description": "A fast and secure Excel/CSV viewer that works entirely in your browser. Open, edit, add records, and export without uploading your file.",
-        "thumbnailUrl": [
-          "https://i.ytimg.com/vi/5J5ck--j1RI/maxresdefault.jpg"
-        ],
-        "uploadDate": "2025-12-03T00:00:00+05:30",
-        "duration": "PT1M",
-        "contentUrl": "https://youtu.be/5J5ck--j1RI",
-        "embedUrl": "https://www.youtube.com/embed/5J5ck--j1RI",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Excel Record Viewer",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://apps.uol.ac.in/assets/icons/icon-512.png",
-            "width": 512,
-            "height": 512
-          }
-        }
-      }
-    </script>
   </head>
   <body>
     <div class="container">
@@ -194,6 +169,7 @@
         <!-- HEADER -->
         <div class="header">
           <h1 style="margin-top:0;">Excel Record Viewer</h1>
+          <button id="installBtn" class="install-top-btn header-install">📲 Install App</button>
           <p style="margin:6px 0 0;">Open • Edit • Add • Export — All in your browser. No uploads, works offline.</p>
           <!-- ==================== EDIT WARNING MODAL (KEPT EXACT) ==================== -->
           <div id="editWarningModal" class="modal" aria-hidden="true">
@@ -243,7 +219,6 @@
           <p id="columnTip" class="fade-tip" style="display:none;">Choose which columns to display.</p>
           <button id="toggleTableBtn" class="install-top-btn" style="display:none;" title="Switch to table view">Table View</button>
           <button id="exportBtn" class="install-top-btn" style="display:none;" title="Export visible data">📤 Export</button>
-          <button id="installBtn" class="install-top-btn" style="display:none;">📲 Install App</button>
         </div>
         <!-- FILE INPUT -->
         <label for="fileInput" class="visually-hidden">Upload Excel or CSV file</label>
@@ -430,40 +405,5 @@
           });
       })();
     </script>
-    <script>
-      // Detect device type (mobile / desktop)
-      function getDeviceType() {
-          const ua = navigator.userAgent.toLowerCase();
-          if (/android|iphone|ipad|ipod/.test(ua)) return "mobile";
-          return "desktop";
-      }
-    
-      // Track PWA install event with device type
-      window.addEventListener("appinstalled", () => {
-          const deviceType = getDeviceType();
-    
-          gtag("event", "pwa_install", {
-              event_category: "PWA",
-              event_label: deviceType
-          });
-    
-          console.log("PWA installed on:", deviceType);
-      });
-    
-      // Track when the installed PWA is opened
-      if (window.matchMedia("(display-mode: standalone)").matches) {
-          const deviceType = getDeviceType();
-    
-          gtag("event", "pwa_open", {
-              event_category: "PWA",
-              event_label: deviceType
-          });
-    
-          console.log("PWA opened:", deviceType);
-      }
-    </script>
   </body>
 </html>
-
-
-
